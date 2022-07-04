@@ -1,18 +1,8 @@
 import re
 import urllib.parse
-from urllib.request import getproxies
 import http.client
 
-def getSystemProxies():
-  auto_proxies = getproxies()
-  if auto_proxies != {}:
-    proxies = {
-      'http': auto_proxies['http'].replace("http://", ""),
-      'https': auto_proxies['https'].replace("https://", ""),
-    }
-  else:
-    proxies = {}
-  return proxies
+from utils import getSystemProxies
 
 username = "kingjames"
 url = "https://www.pixwox.com/profile/"+username

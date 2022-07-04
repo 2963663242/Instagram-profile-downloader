@@ -1,22 +1,11 @@
 import browser_cookie3
 import requests
-from urllib.request import getproxies
 import re
 import json
 
-def getSystemProxies():
-    auto_proxies = getproxies()
-    if auto_proxies != {}:
-        proxies = {
-            'http': auto_proxies['http'].replace("http://", ""),
-            'https': auto_proxies['https'].replace("https://", ""),
-        }
-    else:
-        proxies = {}
-    return proxies
+from utils import getSystemProxies
 
-
-# cj = browser_cookie3.chrome(domain_name="instagram.com")
+cj = browser_cookie3.chrome(domain_name="instagram.com")
 username = "kingjames"
 # webpage = requests.get(url="https://www.instagram.com/"+username,cookies=cj,proxies=getSystemProxies()).text
 #
@@ -48,7 +37,7 @@ edge_followed_by = user['edge_followed_by']["count"]
 
 print("username : "+username)
 print("full_name : "+full_name)
-print("profile_pic_url : "+profile_pic_url)
+print("avatar_url : "+profile_pic_url)
 print("post : "+str(edge_owner_to_timeline_media))
 print("Followers : "+str(edge_followed_by))
 print("Following : "+str(edge_follow))
