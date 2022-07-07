@@ -16,6 +16,18 @@ import re
 ctx = ssl.create_default_context()
 ctx.check_hostname = False
 ctx.verify_mode = ssl.CERT_NONE
+
+def error_process(func):
+    @wraps(func)
+    def wrapped_function(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            pass
+        return None
+
+    return wrapped_function
+
 class instagramDownloader():
     def __init__(self,username):
         self.username = username
@@ -33,6 +45,8 @@ class instagramDownloader():
 
         data = json.loads(response.text)
         return data
+
+    @error_process
     def get_profile(self):
 
         user = self.data["data"]["user"]
@@ -43,6 +57,8 @@ class instagramDownloader():
         edge_followed_by = user['edge_followed_by']["count"]
 
         return {"username":self.username,"full_name":full_name,"avatar_url":profile_pic_url,"post":edge_owner_to_timeline_media,"Followers":edge_follow,"Following":edge_followed_by}
+
+    @error_process
     def get_story(self):
 
         userid = self.data["data"]["user"]["id"]
@@ -79,16 +95,7 @@ def pack_node(data):
     if (data['is_video'] == True):
         node['video_url'] = data['video_url']
     return node
-def error_process(func):
-    @wraps(func)
-    def wrapped_function(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except Exception as e:
-            pass
-        return None
 
-    return wrapped_function
 @error_process
 def get_post(url):
 
