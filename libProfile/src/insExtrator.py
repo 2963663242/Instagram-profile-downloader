@@ -33,14 +33,28 @@ g_targets.add_argument('posts', nargs='*',
                            help="Download profile. If an already-downloaded profile has been renamed, Instaloader "
                                 "automatically finds it by its unique ID and renames the folder likewise.")
 args = parser.parse_args()
-# username = "kingjames"
-# loader = instagramDownloader(username)
-# profile = loader.get_profile()
-# print(profile)
-# story = loader.get_story()
-# print(story)
+if args.profile==None and args.stroy == None and args.stroy == None:
+    print(usage_string())
+    exit(0)
+if args.profile != [] and len(args.profile) != 2:
+    print(usage_string())
+    exit(0)
+if args.stroy != [] and len(args.stroy) != 2:
+    print(usage_string())
+    exit(0)
+if args.posts != [] and len(args.posts) != 2:
+    print(usage_string())
+    exit(0)
 
-url = "http://www.instagram.com/p/CfM3SQDue6Y/?utm_source=ig_web_copy_link"
-node = get_post(url)
-print(node)
+if args.profile != None:
+    loader = instagramDownloader(args.profile[1])
+    profile = loader.get_profile()
+    print(profile)
+elif args.stroy != None:
+    loader = instagramDownloader(args.stroy[1])
+    story = loader.get_story()
+    print(story)
+elif args.posts != None:
+    node = get_post(args.posts[1])
+    print(node)
 
