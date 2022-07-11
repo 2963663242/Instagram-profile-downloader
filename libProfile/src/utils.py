@@ -1,5 +1,4 @@
-import re
-import sys
+import re,sys,os
 from enum import Enum
 from urllib.request import getproxies
 import requests
@@ -20,6 +19,9 @@ def flush_print(data):
 
 @func_set_timeout(10)
 def downpic(url,filename):
+    directory = os.path.dirname(filename)
+    if not os.path.exists(directory):
+        os.mkdir(directory)
     ret= requests.get(url)
     if ret.status_code == 200:
         with open(filename, 'wb') as fp:
