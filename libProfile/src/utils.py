@@ -1,3 +1,4 @@
+import re
 import sys
 from enum import Enum
 from urllib.request import getproxies
@@ -34,3 +35,7 @@ def getSystemProxies():
   else:
     proxies = {}
   return proxies
+
+def filter_filename(filename):
+    real_filename = re.sub('[\/:*?"<>|]', '_',filename)
+    return real_filename

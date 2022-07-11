@@ -7,7 +7,7 @@ from urllib.parse import urlunparse
 import browser_cookie3
 import requests
 
-from utils import getSystemProxies, downpic, MsgType, flush_print
+from utils import getSystemProxies, downpic, MsgType, flush_print, filter_filename
 
 ctx = ssl.create_default_context()
 ctx.check_hostname = False
@@ -55,7 +55,7 @@ class InstagramExtractor():
             'Host': 'i.instagram.com',
             'User-Agent': "Instagram 146.0.0.27.125 (iPhone12,1; iOS 13_3; en_US; en-US; scale=2.00; 1656x3584; 190542906)"
         }
-        cj = browser_cookie3.chrome(domain_name="instagram.com")
+        cj = browser_cookie3.firefox(domain_name="instagram.com")
 
         response = requests.request("GET", url, headers=headers, data=payload,cookies=cj,proxies=getSystemProxies())
         data = response.json()
@@ -71,7 +71,7 @@ class InstagramExtractor():
             if item['media_type'] == 2:
                 node['video_url'] = item['video_versions'][0]['url']
             nodes.append(node)
-        return nodes
+        return {"stories":nodes}
 
 
     def get_post(self,url):
@@ -91,7 +91,7 @@ class InstagramExtractor():
 
         payload = {}
         headers = {
-            # 'Host': 'www.instagram.com',
+            'Host': 'www.instagram.com',
             'User-Agent': "Instagram 146.0.0.27.125 (iPhone12,1; iOS 13_3; en_US; en-US; scale=2.00; 1656x3584; 190542906)"
         }
 
@@ -99,15 +99,20 @@ class InstagramExtractor():
         text = response.text
 
         data = re.search("window.__additionalDataLoaded\('extra',(.+?)\);</script>", text).group(1)
-        data = json.loads(data)['shortcode_media']
-        node = pack_node(data)
-        if 'edge_sidecar_to_children' in data:
-            sub_nodes = []
-            for sub in data['edge_sidecar_to_children']['edges']:
-                sub_nodes.append(pack_node(sub["node"]))
-            node['children'] = sub_nodes
+        if data == 'null':
+            display_url = re.search('<img class="EmbeddedMediaImage" alt="Instagram post shared by @.+?" src="(.+?)" srcset',text).group(1)
+            display_url = display_url.replace("&amp;","&")
+            node = [{'display_url':display_url}]
+        else:
+            data = json.loads(data)['shortcode_media']
+            node = []
+            if 'edge_sidecar_to_children' in data:
+                sub_nodes = []
+                for sub in data['edge_sidecar_to_children']['edges']:
+                    sub_nodes.append(pack_node(sub["node"]))
+                node = sub_nodes
 
-        return node
+        return {"post":node}
 
 def error_process(func):
     @wraps(func)
@@ -134,9 +139,32 @@ class InstagramDownloader():
     def download_profile(self,username):
         extractor = InstagramExtractor()
         data = extractor.get_profile(username=username)
-        real_filename = re.sub('[\/:*?"<>|]', '_', data["username"])
+        real_filename = filter_filename(data["username"])
         path = os.path.join(self.save_path,real_filename+".jpg")
         downpic(data["avatar_url"],path)
         data['path'] = path
         return data
+    @error_process
+    def download_story(self,username):
+        extractor = InstagramExtractor()
+        data = extractor.get_story(username = username)
+        real_filename = filter_filename(username)
+        stories = data['stories']
+        for i,s in enumerate(stories):
+            path = os.path.join(self.save_path, real_filename + "_story_" +str(i)+ ".jpg")
+            downpic(s['display_url'],path)
+            s['path'] = path
+        return data
 
+    @error_process
+    def download_post(self, url):
+        extractor = InstagramExtractor()
+        data = extractor.get_post(url=url)
+        filename = urllib.parse.urlparse(url).path.split('/')[2]
+        real_filename = filter_filename(filename)
+        post = data['post']
+        for i, s in enumerate(post):
+            path = os.path.join(self.save_path, real_filename + "_post_" + str(i) + ".jpg")
+            downpic(s['display_url'], path)
+            s['path'] = path
+        return data
