@@ -14,9 +14,9 @@ using namespace std;
 #endif 
 #endif 
 
-string downloadProfile(string username, string savePath);
-string downloadStory(string username, string savePath);
-string downloadPost(string url, string savePath);
+string inline downloadProfile(string username, string savePath);
+string inline downloadStory(string username, string savePath);
+string inline downloadPost(string url, string savePath);
 
 
 
@@ -26,7 +26,7 @@ DLL_EXPORT void downloadPostInternal(char*& ret, const char* url, const char* sa
 DLL_EXPORT void releaseResult(char* ret);
 
 
-string downloadProfile(string username, string savePath) {
+string inline downloadProfile(string username, string savePath) {
 
 	char* ret = nullptr;
 	downloadProfileInternal(ret, username.c_str(), savePath.c_str());
@@ -34,7 +34,7 @@ string downloadProfile(string username, string savePath) {
 	releaseResult(ret);
 	return rlt;
 }
-string downloadStory(string username, string savePath) {
+string inline downloadStory(string username, string savePath) {
 
 	char* ret = nullptr;
 	downloadStoryInternal(ret, username.c_str(), savePath.c_str());
@@ -42,7 +42,7 @@ string downloadStory(string username, string savePath) {
 	releaseResult(ret);
 	return rlt;
 }
-string downloadPost(string url, string savePath) {
+string inline downloadPost(string url, string savePath) {
 
 	char* ret = nullptr;
 	downloadPostInternal(ret, url.c_str(), savePath.c_str());
