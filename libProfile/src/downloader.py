@@ -55,7 +55,7 @@ class InstagramExtractor():
             'Host': 'i.instagram.com',
             'User-Agent': "Instagram 146.0.0.27.125 (iPhone12,1; iOS 13_3; en_US; en-US; scale=2.00; 1656x3584; 190542906)"
         }
-        cj = browser_cookie3.firefox(domain_name="instagram.com")
+        cj = browser_cookie3.load(domain_name="instagram.com")
 
         response = requests.request("GET", url, headers=headers, data=payload,cookies=cj,proxies=getSystemProxies())
         data = response.json()
