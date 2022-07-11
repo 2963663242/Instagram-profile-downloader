@@ -1,4 +1,4 @@
-import os,sys
+import os,sys,json
 
 from downloader import InstagramExtractor, InstagramDownloader
 from argparse import ArgumentParser
@@ -53,11 +53,12 @@ loader = InstagramDownloader(save_path)
 
 if args.profile != None:
     profile = loader.download_profile(args.profile[0])
-    print(profile)
+
+    print(json.dumps(profile))
 elif args.story != None:
     story = loader.download_story(args.story[0])
-    print(story)
+    print(json.dumps(story))
 elif args.post != None:
     node = loader.download_post(args.post[0])
-    print(node)
+    print(json.dumps(node))
 
