@@ -111,6 +111,8 @@ class InstagramExtractor():
                 for sub in data['edge_sidecar_to_children']['edges']:
                     sub_nodes.append(pack_node(sub["node"]))
                 node = sub_nodes
+            else:
+                node.append(pack_node(data))
 
         return {"post":node}
 
