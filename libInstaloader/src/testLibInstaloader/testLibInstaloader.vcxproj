@@ -73,30 +73,30 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <ExternalIncludePath>$(SolutionDir)..\src\libInstaloader\;$(ExternalIncludePath)</ExternalIncludePath>
-    <OutDir>$(SolutionDir)..\build\$(Platform)\$(Configuration)\bin\</OutDir>
-    <IntDir>$(SolutionDir)..\build\$(Platform)\$(Configuration)\obj\testLibInstaloader\</IntDir>
-    <LibraryPath>$(SolutionDir)..\build\$(Platform)\$(Configuration)\bin\;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)..\build\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\build\obj\$(Platform)\$(Configuration)\testLibInstaloader\</IntDir>
+    <LibraryPath>$(SolutionDir)..\build\bin\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <ExternalIncludePath>$(SolutionDir)..\src\libInstaloader\;$(ExternalIncludePath)</ExternalIncludePath>
-    <OutDir>$(SolutionDir)..\build\$(Platform)\$(Configuration)\bin\</OutDir>
-    <IntDir>$(SolutionDir)..\build\$(Platform)\$(Configuration)\obj\testLibInstaloader\</IntDir>
-    <LibraryPath>$(SolutionDir)..\build\$(Platform)\$(Configuration)\bin\;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)..\build\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\build\obj\$(Platform)\$(Configuration)\testLibInstaloader\</IntDir>
+    <LibraryPath>$(SolutionDir)..\build\bin\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <ExternalIncludePath>$(SolutionDir)..\src\libInstaloader\;$(ExternalIncludePath)</ExternalIncludePath>
-    <OutDir>$(SolutionDir)..\build\$(Platform)\$(Configuration)\bin\</OutDir>
-    <IntDir>$(SolutionDir)..\build\$(Platform)\$(Configuration)\obj\testLibInstaloader\</IntDir>
-    <LibraryPath>$(SolutionDir)..\build\$(Platform)\$(Configuration)\bin\;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)..\build\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\build\obj\$(Platform)\$(Configuration)\testLibInstaloader\</IntDir>
+    <LibraryPath>$(SolutionDir)..\build\bin\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <ExternalIncludePath>$(SolutionDir)..\src\libInstaloader\;$(ExternalIncludePath)</ExternalIncludePath>
-    <OutDir>$(SolutionDir)..\build\$(Platform)\$(Configuration)\bin\</OutDir>
-    <IntDir>$(SolutionDir)..\build\$(Platform)\$(Configuration)\obj\testLibInstaloader\</IntDir>
-    <LibraryPath>$(SolutionDir)..\build\$(Platform)\$(Configuration)\bin\;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)..\build\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\build\obj\$(Platform)\$(Configuration)\testLibInstaloader\</IntDir>
+    <LibraryPath>$(SolutionDir)..\build\bin\$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

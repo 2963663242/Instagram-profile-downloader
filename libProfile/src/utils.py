@@ -1,5 +1,6 @@
-import re,sys,os
+import re,sys,os,json
 from enum import Enum
+from functools import wraps
 from urllib.request import getproxies
 import requests
 from func_timeout import func_set_timeout
@@ -41,3 +42,20 @@ def getSystemProxies():
 def filter_filename(filename):
     real_filename = re.sub('[\/:*?"<>|]', '_',filename)
     return real_filename
+
+def error_process(func):
+    @wraps(func)
+    def wrapped_function(*args, **kwargs):
+        try:
+            data =  func(*args, **kwargs)
+            ret = {'type':MsgType.finished.value,'msg':{
+                'ret_code':'0'
+            }}
+            ret['msg'].update(data)
+        except Exception as e:
+            ret = {'type': MsgType.finished.value, 'msg': {
+                'ret_code': '-1',
+                'exception':str(e.args[0])
+            }}
+        return ret
+    return wrapped_function

@@ -1,13 +1,12 @@
 import json,os,ssl,re
 import urllib.parse
-from functools import wraps
 from urllib.parse import urljoin
 from urllib.parse import urlunparse
 
 import browser_cookie3
 import requests
 
-from utils import getSystemProxies, downpic, MsgType, flush_print, filter_filename
+from utils import getSystemProxies, downpic,filter_filename, error_process
 
 ctx = ssl.create_default_context()
 ctx.check_hostname = False
@@ -116,22 +115,7 @@ class InstagramExtractor():
 
         return {"post":node}
 
-def error_process(func):
-    @wraps(func)
-    def wrapped_function(*args, **kwargs):
-        try:
-            data =  func(*args, **kwargs)
-            ret = {'type':MsgType.finished.value,'msg':{
-                'ret_code':'0'
-            }}
-            ret['msg'].update(data)
-        except Exception as e:
-            ret = {'type': MsgType.finished.value, 'msg': {
-                'ret_code': '-1',
-                'exception':e.args[0]
-            }}
-        return ret
-    return wrapped_function
+
 
 class InstagramDownloader():
     def __init__(self,save_path=""):

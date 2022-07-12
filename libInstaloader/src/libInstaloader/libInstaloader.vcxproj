@@ -73,26 +73,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)..\build\$(Platform)\$(Configuration)\bin\</OutDir>
-    <IntDir>$(SolutionDir)..\build\$(Platform)\$(Configuration)\obj\libInstaloader\</IntDir>
+    <OutDir>$(SolutionDir)..\build\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\build\obj\$(Platform)\$(Configuration)\libInstaloader\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)..\build\$(Platform)\$(Configuration)\bin\</OutDir>
-    <IntDir>$(SolutionDir)..\build\$(Platform)\$(Configuration)\obj\libInstaloader\</IntDir>
+    <OutDir>$(SolutionDir)..\build\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\build\obj\$(Platform)\$(Configuration)\libInstaloader\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)..\build\$(Platform)\$(Configuration)\bin\</OutDir>
-    <IntDir>$(SolutionDir)..\build\$(Platform)\$(Configuration)\obj\libInstaloader\</IntDir>
+    <OutDir>$(SolutionDir)..\build\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\build\obj\$(Platform)\$(Configuration)\libInstaloader\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)..\build\$(Platform)\$(Configuration)\bin\</OutDir>
-    <IntDir>$(SolutionDir)..\build\$(Platform)\$(Configuration)\obj\libInstaloader\</IntDir>
+    <OutDir>$(SolutionDir)..\build\bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\build\obj\$(Platform)\$(Configuration)\libInstaloader\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -107,6 +107,11 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>cd $(SolutionDir)..\..\libProfile\script\
+call compile.bat
+xcopy $(SolutionDir)..\..\libProfile\build\bin\insExtractor\ $(OutDir)\winBin\  /Y /F /E</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -125,6 +130,11 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>cd $(SolutionDir)..\..\libProfile\script\
+call compile.bat
+xcopy $(SolutionDir)..\..\libProfile\build\bin\insExtractor\ $(OutDir)\winBin\  /Y /F /E</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -139,6 +149,11 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>cd $(SolutionDir)..\..\libProfile\script\
+call compile.bat
+xcopy $(SolutionDir)..\..\libProfile\build\bin\insExtractor\ $(OutDir)\winBin\  /Y /F /E</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -157,6 +172,11 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>cd $(SolutionDir)..\..\libProfile\script\
+call compile.bat
+xcopy $(SolutionDir)..\..\libProfile\build\bin\insExtractor\ $(OutDir)\winBin\  /Y /F /E</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CallCmd.cpp" />
