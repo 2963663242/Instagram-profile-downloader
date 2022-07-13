@@ -1,32 +1,39 @@
 #include <Windows.h>
 #include <strsafe.h>
+#include <comutil.h>
+#include <thread>
 #include "simpleInput.h"
+#include "instaloader.h"
+#pragma comment(lib, "comsuppw.lib")
 LRESULT CALLBACK mainProc(HWND, UINT, WPARAM, LPARAM);
 #define PROFILE_BUTTON 3000
+int profilestate = 0;
+HINSTANCE hIns;
+string wstring2string(const wstring& ws);
 
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmd, int nShow) {
 	WNDCLASS wcs = {0,};
 	MSG msg = {0,};
 	HWND hwnd;
 	int msgRet = 0;
-
+	hIns = hInstance;
 	wcs.lpfnWndProc = mainProc;
-	wcs.lpszClassName = "MainWND";
+	wcs.lpszClassName = TEXT("MainWND");
 	wcs.style = CS_HREDRAW | CS_VREDRAW;
 	wcs.hbrBackground = (HBRUSH)(COLOR_APPWORKSPACE + 1);
 	wcs.hCursor = LoadCursor(NULL, IDC_ARROW);
 	wcs.hInstance = hInstance;
 	
 	if (!RegisterClass(&wcs)) {
-		MessageBox(0,"RegisterClass main failed", 0, 0);
+		MessageBox(0, TEXT("RegisterClass main failed"), 0, 0);
 		return GetLastError();
 	}
 
-	createInputWNDClass("MySimpleTextBox", hInstance);
+	createInputWNDClass(TEXT("MySimpleTextBox"), hInstance);
 
 	hwnd = CreateWindow(
-		"MainWND",
-		"instagram-downloader",
+		TEXT("MainWND"),
+		TEXT("instagram-downloader"),
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
@@ -38,14 +45,14 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmd, int nShow)
 	);
 
 	if (!hwnd) {
-		MessageBox(0, "CreateWindow failed", 0, 0);
+		MessageBox(0, TEXT("CreateWindow failed"), 0, 0);
 		return GetLastError();
 	}
 
 	ShowWindow(hwnd, nShow);
 	UpdateWindow(hwnd);
 
-	while ((msgRet = GetMessage(&msg, hwnd, 0, 0))) {
+	while ((msgRet = GetMessage(&msg, NULL, 0, 0))) {
 		if (msgRet == -1) {
 			break;
 		}
@@ -75,8 +82,8 @@ LRESULT CALLBACK mainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		 cxClient = rect.right;
 		 cyClient = rect.bottom;
 
-		 hExtractButton =  CreateWindow("Button", " 解析 ", WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, cxClient *3/4, cyClient/5, 200, 50, hwnd, (HMENU)PROFILE_BUTTON, NULL, NULL);
-		 hExtractInput = CreateWindow("MySimpleTextBox", NULL, WS_CHILDWINDOW | WS_VISIBLE, cxClient * 1 / 7, cyClient / 5, cxClient * 4/7, 50, hwnd, 0, 0, 0);
+		 hExtractButton =  CreateWindow(TEXT("Button"), TEXT(" 解析 "), WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, cxClient *3/4, cyClient/5, 200, 50, hwnd, (HMENU)PROFILE_BUTTON, hIns, NULL);
+		 hExtractInput = CreateWindow(TEXT("MySimpleTextBox"), NULL, WS_CHILDWINDOW | WS_VISIBLE, cxClient * 1 / 7, cyClient / 5, cxClient * 4/7, 50, hwnd, 0, hIns, 0);
 	  //  case WM_PAINT:
 			//hdc = BeginPaint(hwnd, &ps);
 			//GetClientRect(hwnd,&rect);
@@ -101,8 +108,13 @@ LRESULT CALLBACK mainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 
 		case WM_COMMAND:
-			if (LOWORD(wParam) == PROFILE_BUTTON) {
-				
+			if (LOWORD(wParam) == PROFILE_BUTTON && profilestate == 0) {
+				profilestate = 1;
+				thread profileThread([]() {
+					downloadProfile(wstring2string(box_buffer), "download");
+					profilestate = 0;
+					});
+				profileThread.detach();
 			}
 		break;
 		case WM_PAINT:
@@ -113,7 +125,7 @@ LRESULT CALLBACK mainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			MoveWindow(hExtractInput, cxClient * 1 / 7, cyClient / 5, cxClient * 4 / 7, 50, TRUE);
 			break;
 		case WM_CLOSE:
-			nCloseRet = MessageBox(hwnd,"你确定关闭吗","提示", MB_YESNO| MB_ICONEXCLAMATION| MB_APPLMODAL);
+			nCloseRet = MessageBox(hwnd, TEXT("你确定关闭吗"), TEXT("提示"), MB_YESNO| MB_ICONEXCLAMATION| MB_APPLMODAL);
 			if (nCloseRet == IDYES) {
 				break;
 			}
@@ -121,6 +133,19 @@ LRESULT CALLBACK mainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_DESTROY:
 			PostQuitMessage(0);
 			return 0;
+		case WM_ACTIVATE:
+			::SetFocus(hExtractButton);
+			return 0;
 	}
 	return DefWindowProc(hwnd, message, wParam, lParam);
 }
+
+
+string wstring2string(const wstring& ws)
+{
+	_bstr_t t = ws.c_str();
+	char* pchar = (char*)t;
+	string result = pchar;
+	return result;
+}
+
