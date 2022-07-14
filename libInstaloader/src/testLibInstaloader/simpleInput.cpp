@@ -10,7 +10,7 @@ DWORD fistChar;
 void createInputWNDClass(const TCHAR* className,HINSTANCE hinstance) {
 	WNDCLASS wcs = {0,};
 	wcs.style = CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS;
-	wcs.hInstance = hinstance;
+	wcs.hInstance = NULL;
 	wcs.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	wcs.lpszClassName = className;
 	wcs.lpfnWndProc = inputProc;
@@ -28,7 +28,7 @@ void _SetCaretPos(HWND hWnd)
 	HDC hDC = ::GetDC(hWnd);
 
 
-
+	
 	SIZE size;
 
 	::GetTextExtentPoint(hDC, box_buffer.c_str(), box_buffer.size(), &size);

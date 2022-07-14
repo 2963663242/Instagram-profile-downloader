@@ -2,8 +2,9 @@
 #include <strsafe.h>
 #include <comutil.h>
 #include <thread>
-#include "simpleInput.h"
 #include "instaloader.h"
+#include "CzlEdit.h"
+#include "CzlPhotoShower.h"
 #pragma comment(lib, "comsuppw.lib")
 LRESULT CALLBACK mainProc(HWND, UINT, WPARAM, LPARAM);
 #define PROFILE_BUTTON 3000
@@ -12,6 +13,7 @@ HINSTANCE hIns;
 string wstring2string(const wstring& ws);
 
 int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmd, int nShow) {
+	
 	WNDCLASS wcs = {0,};
 	MSG msg = {0,};
 	HWND hwnd;
@@ -29,8 +31,8 @@ int WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmd, int nShow)
 		return GetLastError();
 	}
 
-	createInputWNDClass(TEXT("MySimpleTextBox"), hInstance);
-
+	//createInputWNDClass(TEXT("MySimpleTextBox"), hInstance);
+	//CzlEdit::createCzlEditClass();
 	hwnd = CreateWindow(
 		TEXT("MainWND"),
 		TEXT("instagram-downloader"),
@@ -74,44 +76,29 @@ LRESULT CALLBACK mainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	TEXTMETRIC textMetric;
 	int cxClient, cyClient;
 	static HWND hExtractButton;
-	static HWND hExtractInput;
+	static CzlEdit *hExtractInput;
+	static CzlPhotoShower* czlPhotoShower;
+	//static CzlEdit* hExtractInput2;
 	switch (message) {
 	case WM_CREATE:
 		 
 		 GetClientRect(hwnd,&rect);
 		 cxClient = rect.right;
 		 cyClient = rect.bottom;
+		 hExtractInput = new CzlEdit(hwnd, cxClient * 1 / 7, cyClient / 5, cxClient * 4 / 7, 50);
+		// hExtractInput2 = new CzlEdit(hwnd, cxClient * 1 / 7, cyClient / 5+60, cxClient * 4 / 7, 50);
 
 		 hExtractButton =  CreateWindow(TEXT("Button"), TEXT(" 解析 "), WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, cxClient *3/4, cyClient/5, 200, 50, hwnd, (HMENU)PROFILE_BUTTON, hIns, NULL);
-		 hExtractInput = CreateWindow(TEXT("MySimpleTextBox"), NULL, WS_CHILDWINDOW | WS_VISIBLE, cxClient * 1 / 7, cyClient / 5, cxClient * 4/7, 50, hwnd, 0, hIns, 0);
-	  //  case WM_PAINT:
-			//hdc = BeginPaint(hwnd, &ps);
-			//GetClientRect(hwnd,&rect);
-			////DrawText(hdc, "kingjames", -1, &rect, DT_SINGLELINE|DT_VCENTER| DT_CENTER);
-			//GetTextMetrics(hdc, &textMetric);
-			//cxClient = GetSystemMetrics(SM_CXSCREEN);
-			//cyClient = GetSystemMetrics(SM_CYSCREEN);
-
-			//StringCchPrintf(buffer, MAX_PATH, "当前显示器的高度为:%d pxl", cyClient);
-			//StringCchLength(buffer, MAX_PATH, &len);
-			//TextOut(hdc, 0, 0 , buffer, len);
-			//StringCchPrintf(buffer, MAX_PATH, "当前显示器的宽度为:%d pxl", cxClient);
-			//StringCchLength(buffer, MAX_PATH, &len);
-			//TextOut(hdc, 0, 0 + (textMetric.tmHeight + textMetric.tmExternalLeading), buffer, len);
-			///*for (int i = 0; i < 10; i++) {
-			//	
-			//	StringCchPrintf(buffer,MAX_PATH, "%d:hello", i+1);
-			//	StringCchLength(buffer, MAX_PATH, &len);
-			//	TextOut(hdc, 0, 0 + (textMetric.tmHeight+textMetric.tmExternalLeading) * i, buffer, len);
-			//}*/
-			//EndPaint(hwnd, &ps);
-			break;
-
+		 //hExtractButton =  CreateWindow(TEXT("CzlEdit123"), NULL, WS_CHILDWINDOW | WS_VISIBLE, cxClient * 1 / 7, cyClient / 5, cxClient * 4/7, 50, hwnd, 0, 0, 0);
+		 czlPhotoShower = new CzlPhotoShower(hwnd);
+		 czlPhotoShower->setSize(320, 320);
+		 czlPhotoShower->setPosition(cxClient /2-160,cyClient / 5 + 100);
+		 break;
 		case WM_COMMAND:
 			if (LOWORD(wParam) == PROFILE_BUTTON && profilestate == 0) {
 				profilestate = 1;
 				thread profileThread([]() {
-					downloadProfile(wstring2string(box_buffer), "download");
+					downloadProfile(wstring2string(hExtractInput->getEditText()), "download");
 					profilestate = 0;
 					});
 				profileThread.detach();
@@ -122,7 +109,11 @@ LRESULT CALLBACK mainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			cxClient = rect.right;
 			cyClient = rect.bottom;
 			MoveWindow(hExtractButton, cxClient * 3 / 4, cyClient / 5, 200, 50, TRUE);
-			MoveWindow(hExtractInput, cxClient * 1 / 7, cyClient / 5, cxClient * 4 / 7, 50, TRUE);
+			//MoveWindow(hExtractInput, cxClient * 1 / 7, cyClient / 5, cxClient * 4 / 7, 50, TRUE);
+			hExtractInput->setPosition(cxClient * 1 / 7, cyClient / 5);
+			czlPhotoShower->setSize(320, 320);
+			czlPhotoShower->setPosition(cxClient / 2 -160, cyClient / 5 + 100);
+			//hExtractInput2->setPositin(cxClient * 1 / 7, cyClient / 5 + 60);
 			break;
 		case WM_CLOSE:
 			nCloseRet = MessageBox(hwnd, TEXT("你确定关闭吗"), TEXT("提示"), MB_YESNO| MB_ICONEXCLAMATION| MB_APPLMODAL);
@@ -140,12 +131,4 @@ LRESULT CALLBACK mainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hwnd, message, wParam, lParam);
 }
 
-
-string wstring2string(const wstring& ws)
-{
-	_bstr_t t = ws.c_str();
-	char* pchar = (char*)t;
-	string result = pchar;
-	return result;
-}
 

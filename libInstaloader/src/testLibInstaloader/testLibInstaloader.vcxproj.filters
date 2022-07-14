@@ -13,24 +13,41 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="viewitem">
+      <UniqueIdentifier>{2dfade3a-8a56-4a3a-a05b-c5e54999e340}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="simpleInput.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="CzlEdit.cpp">
+      <Filter>viewitem</Filter>
     </ClCompile>
-    <ClCompile Include="testInput.cpp">
-      <Filter>头文件</Filter>
+    <ClCompile Include="CzlPhotoShower.cpp">
+      <Filter>viewitem</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\libInstaloader\instaloader.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="simpleInput.h">
+    <ClInclude Include="CzlEdit.h">
+      <Filter>viewitem</Filter>
+    </ClInclude>
+    <ClInclude Include="CzlPhotoShower.h">
+      <Filter>viewitem</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
       <Filter>头文件</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="testLibInstaloader.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
