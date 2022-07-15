@@ -1,6 +1,10 @@
 #include "CzlPhotoShower.h"
 //#include <gdiplus.h>
 #include <atlimage.h>
+#include "utils.h"
+
+#define WM_SHOW_PROFILE_RESULT 400
+
 std::wstring CzlPhotoShower::classname = CzlPhotoShower::createCzlClass();
 
 CzlPhotoShower::CzlPhotoShower(HWND hParent)
@@ -23,10 +27,23 @@ void CzlPhotoShower::setPosition(int x, int y)
 	MoveWindow(this->wndInstance, x, y, this->width, this->height, TRUE);
 }
 
-void CzlPhotoShower::setPhotoPath(std::string photoPath)
+void CzlPhotoShower::setPhotoPath(std::wstring photoPath)
 {
 	this->path = photoPath;
 }
+
+void CzlPhotoShower::setVisiable(bool flag)
+{
+	
+	PostMessage(this->wndInstance, WM_SHOW_PROFILE_RESULT, flag, 0);
+}
+
+std::wstring CzlPhotoShower::getImgPath()
+{
+	return this->path;
+}
+
+
 
 LRESULT CzlPhotoShower::czlProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -47,19 +64,34 @@ LRESULT CzlPhotoShower::czlProcExternal(HWND hwnd, UINT message, WPARAM wParam, 
 		 PTSTR       pGlobal = 0;
 		 HBITMAP hbmp;
 		 CImage img;
+		 HRESULT ret = 1;
+		 wstring imgPath = TEXT("");
 		 switch (message) {
 		 case WM_CREATE:
 			 break;
 		 case WM_PAINT:
 			 hdc = BeginPaint(hwnd, &paintStruct);
 			// Gdiplus::Image image(TEXT(R"(download\kingjames.jpg)"));
-			 HRESULT ret = img.Load(TEXT(R"(download\kingjames.jpg)"));
-			 hbmp = img.Detach();
-			 mdc = CreateCompatibleDC(hdc);
-			 SelectObject(mdc, hbmp);
-			 //Gdiplus::Graphics graphics(hdc);
-			 BitBlt(hdc, 0, 0, 320, 320, mdc, 0, 0, SRCAND);
+			 imgPath = edit->getImgPath();
+			 if (imgPath != TEXT("")) {
+				 if(::PathFileExists(imgPath.c_str()))
+					ret = img.Load(imgPath.c_str());
+				 if (ret != 1) {
+					 hbmp = img.Detach();
+					 mdc = CreateCompatibleDC(hdc);
+					 SelectObject(mdc, hbmp);
+					 //Gdiplus::Graphics graphics(hdc);
+					 BitBlt(hdc, 0, 0, 320, 320, mdc, 0, 0, SRCAND);
+				 }
+			 }
 			 EndPaint(hwnd, &paintStruct);
+			 break;
+		 case WM_SHOW_PROFILE_RESULT:
+			 if (wParam)
+				 ::ShowWindow(hwnd, SW_SHOW);
+			 else
+				 ::ShowWindow(hwnd, SW_HIDE);
+			 utils::_UpdateWindow(hwnd);
 			 break;
 		 }
 

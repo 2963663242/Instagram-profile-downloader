@@ -2,18 +2,15 @@
 #include <Windows.h>
 #include <iostream>
 
-class CzlPhotoShower
+class CzlWatingPrompt
 {
-public :
-	CzlPhotoShower(HWND hParent);
+public:
+	CzlWatingPrompt(HWND hParent);
 	void setSize(int width, int height);
 	void setPosition(int x, int y);
-	void setPhotoPath(std::wstring);
 	void setVisiable(bool flag);
-	std::wstring getImgPath();
 
-private:
-	LRESULT czlProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+	void BecomeModal();
 private:
 	HWND wndInstance = 0;
 	std::wstring path;

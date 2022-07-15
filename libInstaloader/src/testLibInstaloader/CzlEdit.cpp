@@ -1,6 +1,5 @@
 #include "CzlEdit.h"
-
-void _UpdateWindowC(HWND hWnd);
+#include "utils.h"
 void _SetCaretPos(HWND hWnd,wstring box_buffer);
 wstring CzlEdit::classname = CzlEdit::createCzlEditClass();
 CzlEdit::CzlEdit(HWND hParent)
@@ -58,7 +57,7 @@ CzlEdit::CzlEdit(HWND hParent,int x,int y,int width,int height)
 		curChar = wParam;
 		if (curChar >= 0x1F) {
 			box_buffer += curChar;
-			_UpdateWindowC(hwnd);
+			utils::_UpdateWindow(hwnd);
 		}
 		break;
 	case WM_KEYDOWN:
@@ -82,7 +81,7 @@ CzlEdit::CzlEdit(HWND hParent,int x,int y,int width,int height)
 			pGlobal != 0 ? box_buffer += pGlobal : box_buffer;
 
 		}
-		_UpdateWindowC(hwnd);
+		utils::_UpdateWindow(hwnd);
 	}
 
 	return ::DefWindowProc(hwnd, message, wParam, lParam);
@@ -150,21 +149,7 @@ CzlEdit::CzlEdit(HWND hParent,int x,int y,int width,int height)
 	 return className;
  }
 
- // 更新窗口
 
- void _UpdateWindowC(HWND hWnd)
-
- {
-
-	 RECT rect;
-
-	 ::GetClientRect(hWnd, &rect);
-
-	 ::InvalidateRect(hWnd, &rect, TRUE);
-
-	 ::UpdateWindow(hWnd);
-
- }
 
  // 设置光标位置
 

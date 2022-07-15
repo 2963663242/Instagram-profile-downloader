@@ -30,6 +30,9 @@
     <ClCompile Include="utils.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="CzlWatingPrompt.cpp">
+      <Filter>viewitem</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\libInstaloader\instaloader.h">
@@ -44,10 +47,11 @@
     <ClInclude Include="utils.h">
       <Filter>头文件</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="testLibInstaloader.rc">
-      <Filter>资源文件</Filter>
-    </ResourceCompile>
+    <ClInclude Include="json.hpp">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CzlWatingPrompt.h">
+      <Filter>viewitem</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
