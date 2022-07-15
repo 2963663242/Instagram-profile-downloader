@@ -23,7 +23,7 @@ def downpic(url,filename):
     directory = os.path.dirname(filename)
     if not os.path.exists(directory):
         os.mkdir(directory)
-    ret= requests.get(url)
+    ret= requests.get(url,proxies=getSystemProxies())
     if ret.status_code == 200:
         with open(filename, 'wb') as fp:
             fp.write(ret.content)
