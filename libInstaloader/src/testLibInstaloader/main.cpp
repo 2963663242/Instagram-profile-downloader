@@ -103,8 +103,8 @@ LRESULT CALLBACK mainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// hExtractInput2 = new CzlEdit(hwnd, cxClient * 1 / 7, cyClient / 5+60, cxClient * 4 / 7, 50);
 
 		 hExtractButton =  CreateWindow(TEXT("Button"), TEXT(" 解析 "), WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, cxClient *3/4, cyClient/5, 200, 50, hwnd, (HMENU)PROFILE_BUTTON, hIns, NULL);
-		 hDirButton = CreateWindow(TEXT("Button"), TEXT(" 选择存放目录 "), WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, cxClient * 3 / 4, cyClient * 4 / 5, 200, 50, hwnd, (HMENU)SELECT_DIR_BUTTON, hIns, NULL);
-		 hOpenButton = CreateWindow(TEXT("Button"), TEXT(" 打开存放目录 "), WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, cxClient * 3 / 4, cyClient * 4 / 5+60, 200, 50, hwnd, (HMENU)OPEN_DIR_BUTTON, hIns, NULL);
+		 hDirButton = CreateWindow(TEXT("Button"), TEXT(" 选择存放目录 "), WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, cxClient * 3 / 4, cyClient-140, 200, 50, hwnd, (HMENU)SELECT_DIR_BUTTON, hIns, NULL);
+		 hOpenButton = CreateWindow(TEXT("Button"), TEXT(" 打开存放目录 "), WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, cxClient * 3 / 4, cyClient -70, 200, 50, hwnd, (HMENU)OPEN_DIR_BUTTON, hIns, NULL);
 		 // hDirButton = CreateWindow(TEXT("Button"), TEXT(" 解析 "), WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, cxClient * 3 / 4, cyClient 4/ 5, 200, 50, hwnd, (HMENU)PROFILE_BUTTON, hIns, NULL);
 		 //hExtractButton =  CreateWindow(TEXT("CzlEdit123"), NULL, WS_CHILDWINDOW | WS_VISIBLE, cxClient * 1 / 7, cyClient / 5, cxClient * 4/7, 50, hwnd, 0, 0, 0);
 		 czlPhotoShower = new CzlPhotoShower(hwnd);
@@ -175,8 +175,8 @@ LRESULT CALLBACK mainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			czlPhotoShower->setPosition(cxClient / 2 -160, cyClient / 5 + 100);
 			//hExtractInput2->setPositin(cxClient * 1 / 7, cyClient / 5 + 60);
 			//czlWatingPrompt->setSize(rect.right, rect.bottom);
-			MoveWindow(hDirButton, cxClient * 3 / 4, cyClient*4 / 5, 200, 50, TRUE); 
-			MoveWindow(hOpenButton, cxClient * 3 / 4, cyClient * 4 / 5+60, 200, 50, TRUE);
+			MoveWindow(hDirButton, cxClient * 3 / 4, cyClient - 140, 200, 50, TRUE);
+			MoveWindow(hOpenButton, cxClient * 3 / 4, cyClient -70 , 200, 50, TRUE);
 			break;
 		case WM_CLOSE:
 			nCloseRet = MessageBox(hwnd, TEXT("你确定关闭吗"), TEXT("提示"), MB_YESNO| MB_ICONEXCLAMATION| MB_APPLMODAL);

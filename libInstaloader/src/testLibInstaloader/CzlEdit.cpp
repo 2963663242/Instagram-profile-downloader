@@ -29,12 +29,20 @@ CzlEdit::CzlEdit(HWND hParent,int x,int y,int width,int height)
 	wchar_t curChar;
 	HGLOBAL     hGlobal;
 	PTSTR       pGlobal = 0;
+	std::wstring trimBuffer = TEXT("");
 	switch (message) {
 	case WM_PAINT:
 		hdc = ::BeginPaint(hwnd, &paintStruct);
 		::GetClientRect(hwnd, &rect);
 		::DrawEdge(hdc, &rect, EDGE_SUNKEN, BF_RECT);
-		::TextOut(hdc, 10, rect.bottom / 3, box_buffer.c_str(), box_buffer.size());
+		trimBuffer = TEXT("");
+		for (int i = 0; i < box_buffer.size(); i++) {
+			if (box_buffer[i] > 0x1F) {
+				trimBuffer += box_buffer[i];
+			}
+		}
+			
+		::TextOut(hdc, 10, rect.bottom / 3, trimBuffer.c_str(), trimBuffer.size());
 		::EndPaint(hwnd, &paintStruct);
 		_SetCaretPos(hwnd,this->box_buffer);
 		break;
@@ -55,7 +63,7 @@ CzlEdit::CzlEdit(HWND hParent,int x,int y,int width,int height)
 		break;
 	case WM_CHAR:
 		curChar = wParam;
-		if (curChar >= 0x1F) {
+		if (curChar > 0x1F) {
 			box_buffer += curChar;
 			utils::_UpdateWindow(hwnd);
 		}
@@ -77,9 +85,8 @@ CzlEdit::CzlEdit(HWND hParent,int x,int y,int width,int height)
 				GlobalUnlock(hGlobal);
 			}
 			CloseClipboard();
-
+			
 			pGlobal != 0 ? box_buffer += pGlobal : box_buffer;
-
 		}
 		utils::_UpdateWindow(hwnd);
 	}

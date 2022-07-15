@@ -13,5 +13,5 @@ if "%1"=="" (
 ) 
 
 echo "packaging ..."
-pyinstaller %1  -y insExtractor.py --distpath  %LIBPROFILE_BUILD%\bin --workpath %LIBPROFILE_BUILD%\obj
+pyinstaller %1  -y insExtractor.py --distpath  %LIBPROFILE_BUILD%\bin --workpath %LIBPROFILE_BUILD%\obj --clean
 cd %LIBPROFILE_SCRIPT%
