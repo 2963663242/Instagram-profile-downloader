@@ -9,6 +9,7 @@
 #include "utils.h"
 #include "json.hpp"
 #include "CzlWatingPrompt.h"
+#include "PhotoShower.h"
 #pragma comment(lib, "comsuppw.lib")
 LRESULT CALLBACK mainProc(HWND, UINT, WPARAM, LPARAM);
 #define PROFILE_BUTTON 3000
@@ -88,8 +89,10 @@ LRESULT CALLBACK mainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	static HWND hExtractButton;
 	static HWND hDirButton;
 	static HWND hOpenButton;
+	static HWND EditButton;
 	static CzlEdit *hExtractInput;
 	static CzlPhotoShower* czlPhotoShower;
+	static PhotoShower* photoShower;
 	static std::string sFolder = "download";
 	//static CzlWatingPrompt* czlWatingPrompt;
 	//static CzlEdit* hExtractInput2;
@@ -106,12 +109,12 @@ LRESULT CALLBACK mainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		 hDirButton = CreateWindow(TEXT("Button"), TEXT(" 选择存放目录 "), WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, cxClient * 3 / 4, cyClient-140, 200, 50, hwnd, (HMENU)SELECT_DIR_BUTTON, hIns, NULL);
 		 hOpenButton = CreateWindow(TEXT("Button"), TEXT(" 打开存放目录 "), WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, cxClient * 3 / 4, cyClient -70, 200, 50, hwnd, (HMENU)OPEN_DIR_BUTTON, hIns, NULL);
 		 // hDirButton = CreateWindow(TEXT("Button"), TEXT(" 解析 "), WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, cxClient * 3 / 4, cyClient 4/ 5, 200, 50, hwnd, (HMENU)PROFILE_BUTTON, hIns, NULL);
-		 //hExtractButton =  CreateWindow(TEXT("CzlEdit123"), NULL, WS_CHILDWINDOW | WS_VISIBLE, cxClient * 1 / 7, cyClient / 5, cxClient * 4/7, 50, hwnd, 0, 0, 0);
-		 czlPhotoShower = new CzlPhotoShower(hwnd);
+		 //EditButton =  CreateWindow(TEXT("EDIT"), NULL, WS_CHILDWINDOW | WS_VISIBLE, cxClient * 1 / 7, cyClient *2/ 5, cxClient * 4/7, 50, hwnd, 0, 0, 0);
+		/* czlPhotoShower = new CzlPhotoShower(hwnd);
 		 czlPhotoShower->setVisiable(false);
 		 czlPhotoShower->setSize(320, 320);
-		 czlPhotoShower->setPosition(cxClient /2-160,cyClient / 5 + 100);
-
+		 czlPhotoShower->setPosition(cxClient /2-160,cyClient / 5 + 100);*/
+		 photoShower = new PhotoShower(hwnd, 320, 320, cxClient / 2 - 160, cyClient / 5 + 100);
 		/* czlWatingPrompt = new CzlWatingPrompt(hwnd);
 		 czlWatingPrompt->setSize(rect.right, rect.bottom);*/
 		 //czlWatingPrompt->setPosition(cxClient / 2 - 160, cyClient / 5 + 100);
@@ -120,7 +123,7 @@ LRESULT CALLBACK mainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_COMMAND:
 			if (LOWORD(wParam) == PROFILE_BUTTON && profilestate == 0) {
 				profilestate = 1;
-				czlPhotoShower->setVisiable(false);
+				photoShower->setVisiable(false);
 				thread profileThread([]() {
 					std::string ret = "";
 					std::string imgPath = "";
@@ -134,8 +137,10 @@ LRESULT CALLBACK mainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 						}
 					}
 					
-					czlPhotoShower->setPhotoPath(utils::string2wstring(imgPath));
-					czlPhotoShower->setVisiable(true);
+					/*czlPhotoShower->setPhotoPath(utils::string2wstring(imgPath));*/
+					
+					photoShower->setImages({ utils::string2wstring(imgPath) });
+					photoShower->setVisiable(true);
 					//::PostMessage()
 					profilestate = 0;
 					});
@@ -171,12 +176,20 @@ LRESULT CALLBACK mainProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			MoveWindow(hExtractButton, cxClient * 3 / 4, cyClient / 5, 200, 50, TRUE);
 			//MoveWindow(hExtractInput, cxClient * 1 / 7, cyClient / 5, cxClient * 4 / 7, 50, TRUE);
 			hExtractInput->setPosition(cxClient * 1 / 7, cyClient / 5);
-			czlPhotoShower->setSize(320, 320);
-			czlPhotoShower->setPosition(cxClient / 2 -160, cyClient / 5 + 100);
+		/*	czlPhotoShower->setSize(320, 320);
+			czlPhotoShower->setPosition(cxClient / 2 -160, cyClient / 5 + 100);*/
+			photoShower->setSize(320, 320);
+			photoShower->setPosition(cxClient / 2 - 160, cyClient / 5 + 100);
 			//hExtractInput2->setPositin(cxClient * 1 / 7, cyClient / 5 + 60);
 			//czlWatingPrompt->setSize(rect.right, rect.bottom);
+			//MoveWindow(EditButton, cxClient * 1 / 7, cyClient * 2 / 5, cxClient * 4 / 7, 50, TRUE);
 			MoveWindow(hDirButton, cxClient * 3 / 4, cyClient - 140, 200, 50, TRUE);
 			MoveWindow(hOpenButton, cxClient * 3 / 4, cyClient -70 , 200, 50, TRUE);
+			/*hdc = ::BeginPaint(EditButton, &ps);
+			::GetClientRect(EditButton, &rect);
+			::DrawEdge(hdc, &rect, EDGE_SUNKEN, BF_RECT);
+			::EndPaint(EditButton, &ps);*/
+			//utils::_UpdateWindow(EditButton);
 			break;
 		case WM_CLOSE:
 			nCloseRet = MessageBox(hwnd, TEXT("你确定关闭吗"), TEXT("提示"), MB_YESNO| MB_ICONEXCLAMATION| MB_APPLMODAL);

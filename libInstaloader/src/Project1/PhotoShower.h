@@ -1,0 +1,37 @@
+#pragma once
+#include <Windows.h>
+#include <iostream>
+#include <vector>
+class PhotoShower
+{
+public:
+	PhotoShower(HWND hParent, int x, int y, int width, int height);
+	~PhotoShower();
+	void setSize(int width, int height);
+	void setPosition(int x, int y);
+	void setVisiable(bool flag);
+	void setImages(std::vector<std::wstring> imgPaths);
+	void setImgIndex(int index);
+	int getImgIndex();
+	int getImgCount();
+	void addImgIndex();
+	void subImgIndex();
+	HBITMAP getcurimg();
+private:
+	HWND wndInstance = 0;
+	std::vector<HBITMAP> imgs;
+	std::vector<std::wstring> imgPaths;
+	int index;
+	HWND hParent = 0;
+	int x = 0;
+	int y = 0;
+	int width = 0;
+	int height = 0;
+private:
+	static LRESULT CALLBACK czlProcExternal(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+	static  std::wstring createCzlClass();
+private:
+	static  std::wstring classname;
+
+};
+

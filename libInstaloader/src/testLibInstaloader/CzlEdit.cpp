@@ -40,8 +40,11 @@ CzlEdit::CzlEdit(HWND hParent,int x,int y,int width,int height)
 			if (box_buffer[i] > 0x1F) {
 				trimBuffer += box_buffer[i];
 			}
+			else {
+				trimBuffer += TEXT(" ");
+			}
 		}
-			
+		//::SetTextColor(hdc, RGB(255, 255, 255));
 		::TextOut(hdc, 10, rect.bottom / 3, trimBuffer.c_str(), trimBuffer.size());
 		::EndPaint(hwnd, &paintStruct);
 		_SetCaretPos(hwnd,this->box_buffer);

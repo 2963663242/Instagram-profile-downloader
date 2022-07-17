@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libInstaloader", "..\src\li
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testLibInstaloader", "..\src\testLibInstaloader\testLibInstaloader.vcxproj", "{1DBBE32E-8EE5-4917-9BB2-6FEB5E7A1819}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libInstaloaderDemo", "..\src\Project1\Project1.vcxproj", "{A43E39D6-0B1A-4276-92E3-D34FF1E5DEA4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{1DBBE32E-8EE5-4917-9BB2-6FEB5E7A1819}.Release|x64.Build.0 = Release|x64
 		{1DBBE32E-8EE5-4917-9BB2-6FEB5E7A1819}.Release|x86.ActiveCfg = Release|Win32
 		{1DBBE32E-8EE5-4917-9BB2-6FEB5E7A1819}.Release|x86.Build.0 = Release|Win32
+		{A43E39D6-0B1A-4276-92E3-D34FF1E5DEA4}.Debug|x64.ActiveCfg = Debug|x64
+		{A43E39D6-0B1A-4276-92E3-D34FF1E5DEA4}.Debug|x64.Build.0 = Debug|x64
+		{A43E39D6-0B1A-4276-92E3-D34FF1E5DEA4}.Debug|x86.ActiveCfg = Debug|Win32
+		{A43E39D6-0B1A-4276-92E3-D34FF1E5DEA4}.Debug|x86.Build.0 = Debug|Win32
+		{A43E39D6-0B1A-4276-92E3-D34FF1E5DEA4}.Release|x64.ActiveCfg = Release|x64
+		{A43E39D6-0B1A-4276-92E3-D34FF1E5DEA4}.Release|x64.Build.0 = Release|x64
+		{A43E39D6-0B1A-4276-92E3-D34FF1E5DEA4}.Release|x86.ActiveCfg = Release|Win32
+		{A43E39D6-0B1A-4276-92E3-D34FF1E5DEA4}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -9,7 +9,7 @@ std::wstring CzlPhotoShower::classname = CzlPhotoShower::createCzlClass();
 
 CzlPhotoShower::CzlPhotoShower(HWND hParent)
 {
-    this->wndInstance = CreateWindow(CzlPhotoShower::classname.c_str(), NULL, WS_CHILDWINDOW | WS_VISIBLE, x, y, width, height, hParent, 0, NULL, NULL);
+    this->wndInstance = CreateWindow(CzlPhotoShower::classname.c_str(), NULL,   WS_VISIBLE, x, y, width, height, hParent, 0, NULL, NULL);
     SetWindowLongPtr(wndInstance, -21, (LONG_PTR)this);
 }
 
@@ -81,7 +81,7 @@ LRESULT CzlPhotoShower::czlProcExternal(HWND hwnd, UINT message, WPARAM wParam, 
 					 mdc = CreateCompatibleDC(hdc);
 					 SelectObject(mdc, hbmp);
 					 //Gdiplus::Graphics graphics(hdc);
-					 BitBlt(hdc, 0, 0, 320, 320, mdc, 0, 0, SRCAND);
+					 BitBlt(hdc, 0, 0, 220, 220, mdc, 0, 0, SRCAND);
 				 }
 			 }
 			 EndPaint(hwnd, &paintStruct);
