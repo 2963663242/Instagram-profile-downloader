@@ -20,6 +20,7 @@ def flush_print(data):
 
 @func_set_timeout(10)
 def downpic(url,filename):
+    filename = os.path.abspath(filename)
     directory = os.path.dirname(filename)
     if not os.path.exists(directory):
         os.mkdir(directory)
