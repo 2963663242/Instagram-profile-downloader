@@ -35,9 +35,10 @@ string runCMD(string cmd){
 	char buffer[4096] = { 0 };
 	DWORD bytesRead;
 	while (1) {   //读取管道内的数据
+
 		if (ReadFile(hRead, buffer, 4095, &bytesRead, NULL) == NULL) break;
 		result += buffer;
-	
+		memset(buffer, 0, 4096);
 	}
 
 	return result;
