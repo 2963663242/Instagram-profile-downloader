@@ -17,6 +17,7 @@ namespace utils {
 
 	std::wstring selectFolder();
 	void openFolder(wstring folder);
+
  }
 
 

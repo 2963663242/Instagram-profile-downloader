@@ -59,6 +59,7 @@ void utils::openFolder(wstring folder)
 }
 
 
+
 	string utils::wstring2string(const wstring& ws)
 	{
 		_bstr_t t = ws.c_str();

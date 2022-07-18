@@ -22,21 +22,23 @@ void onProfileButtonClick(HWND hDlg)
 	thread profileThread([=]() {
 		std::string ret = "";
 		std::string imgPath = "";
-
+		COPYDATASTRUCT copyData = { 0 };
+		copyData.cbData = sizeof(PhotoShower);
+		copyData.dwData = (DWORD)shower;
 		ret = downloadProfile(username, savePath);
 		
-
+		 
 		auto jsonrlt = nlohmann::json::parse(ret);
 		if (jsonrlt.find("type") != jsonrlt.end() && jsonrlt["type"].get<std::string>() == "finished") {
 			auto msg = jsonrlt["msg"];
 			if (msg.find("path") != msg.end()) {
 				imgPath = msg["path"].get<std::string>();
 				shower->setImages({ utils::string2wstring(imgPath) });
-				SendMessage(hDlg, WM_SHOWIMAGE, 0, 0);
+				SendMessage(hDlg, WM_SHOWIMAGE, 0, (LPARAM)&copyData);
 				return;
 			}
 		}
-		
+		SendMessage(hDlg, WM_SHOWIMAGE, 0, 0);
 		});
 	profileThread.detach();
 
@@ -74,15 +76,53 @@ void onPostButtonClick(HWND hDlg)
 					}
 				}
 				shower->setImages(imgPaths);
-				SendMessage(hDlg, WM_SHOWIMAGE, 0, 0);
+				SendMessage(hDlg, WM_SHOWIMAGE, 0, 1);
 				return;
 			}
 		}
-
+		SendMessage(hDlg, WM_SHOWIMAGE, 0, 0);
 		});
 	profileThread.detach();
 }
 
 void onStoryButtonClick(HWND hDlg)
 {
+	TCHAR buffer[MAX_BUFFER_SIZE];
+	std::string username;
+	std::string savePath;
+
+	::GetDlgItemText(hDlg, IDC_INPUT, buffer, MAX_BUFFER_SIZE);
+	username = utils::wstring2string(buffer);
+	::GetDlgItemText(hDlg, IDC_SHOW_DIR, buffer, MAX_BUFFER_SIZE);
+	savePath = utils::wstring2string(buffer);
+
+
+	thread profileThread([=]() {
+		std::string ret = "";
+		std::string imgPath = "";
+
+		ret = downloadStory(username, savePath);
+
+
+		auto jsonrlt = nlohmann::json::parse(ret);
+		if (jsonrlt.find("type") != jsonrlt.end() && jsonrlt["type"].get<std::string>() == "finished") {
+			auto msg = jsonrlt["msg"];
+			if (msg["ret_code"].get<std::string>() == "0") {
+				auto post = msg["stories"];
+				std::vector<std::wstring> imgPaths{};
+				for (auto obj : post) {
+					if (obj.find("path") != obj.end()) {
+						imgPath = obj["path"].get<std::string>();
+						imgPaths.push_back(utils::string2wstring(imgPath));
+
+					}
+				}
+				shower->setImages(imgPaths);
+				SendMessage(hDlg, WM_SHOWIMAGE, 0, 1);
+				return;
+			}
+		}
+		SendMessage(hDlg, WM_SHOWIMAGE, 0, 0);
+		});
+	profileThread.detach();
 }

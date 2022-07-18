@@ -47,6 +47,7 @@ INT_PTR CALLBACK _WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         shower->setVisiable(false);
         ::SetDlgItemText(hwnd, IDC_SHOW_DIR, TEXT("download"));
 
+        MoveWindow(hwnd, screenW / 2 - rect.right / 2, screenH / 2 - rect.bottom / 2, rect.right, rect.bottom,TRUE);
         break;
     case WM_CLOSE:
         EndDialog(hwnd, 0);
@@ -55,8 +56,12 @@ INT_PTR CALLBACK _WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
        
         switch (LOWORD(wParam))
         {
-        case IDC_SELECT_DIR:
-            ::SetDlgItemText(hwnd, IDC_SHOW_DIR, utils::selectFolder().c_str());
+        case IDC_SELECT_DIR: {
+            wstring dir = TEXT("");
+            dir = utils::selectFolder();
+            if (dir != TEXT(""))
+                ::SetDlgItemText(hwnd, IDC_SHOW_DIR, dir.c_str());
+        }
             break;
         case IDC_OPEN_DIR: {
 
@@ -71,11 +76,18 @@ INT_PTR CALLBACK _WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
         case IDC_POST_POPUP:
             onPostButtonClick(hwnd);
             break;
+        case IDC_STORY_POPUP:
+            onStoryButtonClick(hwnd);
+            break;
         }
 
         break;
     case WM_SHOWIMAGE:
-        shower->setVisiable(TRUE);
+        if (lParam > 0)
+            shower->setVisiable(TRUE);
+        else
+            MessageBox(0, TEXT("½âÎöÊ§°Ü"), 0, 0);
+        
         break;
     default:
         bRet = FALSE;

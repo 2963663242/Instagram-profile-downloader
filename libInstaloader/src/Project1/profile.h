@@ -3,7 +3,7 @@
 #include <string>
 #include "PhotoShower.h"
 
-#define WM_SHOWIMAGE 402  
+#define WM_SHOWIMAGE WM_USER+1  
 
 extern PhotoShower* shower;
 void onProfileButtonClick(HWND hDlg);
