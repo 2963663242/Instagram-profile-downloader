@@ -22,12 +22,9 @@ void onProfileButtonClick(HWND hDlg)
 	thread profileThread([=]() {
 		std::string ret = "";
 		std::string imgPath = "";
-		if (savePath == "") {
-			ret = downloadProfile(username, "download");
-		}
-		else {
-			ret = downloadProfile(username, savePath);
-		}
+
+		ret = downloadProfile(username, savePath);
+		
 
 		auto jsonrlt = nlohmann::json::parse(ret);
 		if (jsonrlt.find("type") != jsonrlt.end() && jsonrlt["type"].get<std::string>() == "finished") {
@@ -60,12 +57,8 @@ void onPostButtonClick(HWND hDlg)
 	thread profileThread([=]() {
 		std::string ret = "";
 		std::string imgPath = "";
-		if (savePath == "") {
-			ret = downloadPost(url, "download");
-		}
-		else {
-			ret = downloadPost(url, savePath);
-		}
+
+		ret = downloadPost(url, savePath);
 
 		auto jsonrlt = nlohmann::json::parse(ret);
 		if (jsonrlt.find("type") != jsonrlt.end() && jsonrlt["type"].get<std::string>() == "finished") {
