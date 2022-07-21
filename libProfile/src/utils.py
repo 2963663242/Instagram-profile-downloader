@@ -60,3 +60,26 @@ def error_process(func):
             }}
         return ret
     return wrapped_function
+
+
+def pack_post(data):
+    node = {
+        'display_url': data['display_url'],
+        'height': data['dimensions']['height'],
+        'width': data['dimensions']['width']
+    }
+    if (data['is_video'] == True):
+        node['video_url'] = data['video_url']
+    return node
+def pack_story(item):
+    image = item['image_versions2']['candidates'][0]
+    node = {
+        'display_url': image['url'],
+        'height': image['height'],
+        'width': image['width']
+    }
+    if item['media_type'] == 2:
+        node['video_url'] = item['video_versions'][0]['url']
+        node['height'] = item['video_versions'][0]['height']
+        node['width'] = item['video_versions'][0]['width']
+    return node

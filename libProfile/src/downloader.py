@@ -6,7 +6,7 @@ from urllib.parse import urlunparse
 import browser_cookie3
 import requests
 
-from utils import getSystemProxies, downpic,filter_filename, error_process
+from utils import getSystemProxies, downpic, filter_filename, error_process, pack_story, pack_post
 
 ctx = ssl.create_default_context()
 ctx.check_hostname = False
@@ -61,28 +61,30 @@ class InstagramExtractor():
         items = data['reel']['items']
         nodes  = []
         for item in items:
-            image = item['image_versions2']['candidates'][0]
-            node = {
-                    'display_url': image['url'],
-                    'height': image['height'],
-                    'width': image['width']
-                }
-            if item['media_type'] == 2:
-                node['video_url'] = item['video_versions'][0]['url']
+            node = pack_story(item)
             nodes.append(node)
         return {"stories":nodes}
 
+    def get_post_by_media_id(self,id):
+        url = "https://i.instagram.com/api/v1/media/" + id + "/info/"
+
+        payload = {}
+        headers = {
+            'Host': 'i.instagram.com',
+            'User-Agent': "Instagram 146.0.0.27.125 (iPhone12,1; iOS 13_3; en_US; en-US; scale=2.00; 1656x3584; 190542906)"
+        }
+        cj = browser_cookie3.load(domain_name="instagram.com")
+
+        response = requests.request("GET", url, headers=headers, data=payload, cookies=cj, proxies=getSystemProxies())
+        data = response.json()
+        items = data['items']
+        nodes = []
+        for item in items:
+            node = pack_story(item)
+            nodes.append(node)
+        return nodes
 
     def get_post(self,url):
-        def pack_node(data):
-            node = {
-                'display_url': data['display_url'],
-                'height': data['dimensions']['height'],
-                'width': data['dimensions']['width']
-            }
-            if (data['is_video'] == True):
-                node['video_url'] = data['video_url']
-            return node
         urlparsed = urllib.parse.urlparse(url)
         if not urlparsed.path.endswith("embed") and not urlparsed.path.endswith("embed/"):
             url = urlunparse((urlparsed.scheme, urlparsed.netloc, urljoin(urlparsed.path, "embed", True),
@@ -102,16 +104,21 @@ class InstagramExtractor():
             display_url = re.search('<img class="EmbeddedMediaImage" alt="Instagram post shared by @.+?" src="(.+?)" srcset',text).group(1)
             display_url = display_url.replace("&amp;","&")
             node = [{'display_url':display_url}]
+            try:
+                id = re.search('data-media-id="(.+?)"',text).group(1)
+                node = self.get_post_by_media_id(id)
+            except Exception as e:
+                pass
         else:
             data = json.loads(data)['shortcode_media']
             node = []
             if 'edge_sidecar_to_children' in data:
                 sub_nodes = []
                 for sub in data['edge_sidecar_to_children']['edges']:
-                    sub_nodes.append(pack_node(sub["node"]))
+                    sub_nodes.append(pack_post(sub["node"]))
                 node = sub_nodes
             else:
-                node.append(pack_node(data))
+                node.append(pack_post(data))
 
         return {"post":node}
 
