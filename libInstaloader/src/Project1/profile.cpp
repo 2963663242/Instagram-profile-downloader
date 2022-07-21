@@ -31,10 +31,18 @@ void onProfileButtonClick(HWND hDlg)
 		auto jsonrlt = nlohmann::json::parse(ret);
 		if (jsonrlt.find("type") != jsonrlt.end() && jsonrlt["type"].get<std::string>() == "finished") {
 			auto msg = jsonrlt["msg"];
-			if (msg.find("path") != msg.end()) {
-				imgPath = msg["path"].get<std::string>();
-				shower->setImages({ utils::string2wstring(imgPath) });
-				SendMessage(hDlg, WM_SHOWIMAGE, 0, (LPARAM)&copyData);
+			if (msg["ret_code"].get<std::string>() == "0") {
+				auto post = msg["profile"];
+				std::vector<std::wstring> imgPaths{};
+				for (auto obj : post) {
+					if (obj.find("path") != obj.end()) {
+						imgPath = obj["path"].get<std::string>();
+						imgPaths.push_back(utils::string2wstring(imgPath));
+
+					}
+				}
+				shower->setImages(imgPaths);
+				SendMessage(hDlg, WM_SHOWIMAGE, 0, 1);
 				return;
 			}
 		}
