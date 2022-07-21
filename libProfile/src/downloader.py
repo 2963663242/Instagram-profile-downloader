@@ -35,12 +35,13 @@ class InstagramExtractor():
         self.data = self.fetch_matadata()
         user = self.data["data"]["user"]
         full_name = user["full_name"]
-        profile_pic_url = user['profile_pic_url_hd']
+        profile_pic_url = user['profile_pic_url']
+        profile_pic_url_hd = user['profile_pic_url_hd']
         edge_owner_to_timeline_media = user['edge_owner_to_timeline_media']["count"]
         edge_follow = user['edge_follow']["count"]
         edge_followed_by = user['edge_followed_by']["count"]
-
-        return {"username":self.username,"full_name":full_name,"avatar_url":profile_pic_url,"post":edge_owner_to_timeline_media,"Followers":edge_follow,"Following":edge_followed_by}
+        data = {"username":self.username,"full_name":full_name,"profile":[{"display_url":profile_pic_url,'height':150,'width':150},{"display_url":profile_pic_url_hd,'height':320,'width':320}],"post":edge_owner_to_timeline_media,"Followers":edge_follow,"Following":edge_followed_by}
+        return data
 
 
     def get_story(self,username):
@@ -133,9 +134,11 @@ class InstagramDownloader():
         extractor = InstagramExtractor()
         data = extractor.get_profile(username=username)
         real_filename = filter_filename(data["username"])
-        path = os.path.join(self.save_path,real_filename+".jpg")
-        downpic(data["avatar_url"],path)
-        data['path'] = path
+        profile = data["profile"]
+        for i,p in enumerate(profile):
+            path = os.path.join(self.save_path, real_filename + "_profile_" +str(i)+ ".jpg")
+            downpic(p['display_url'],path)
+            p['path'] = path
         return data
     @error_process
     def download_story(self,username):
