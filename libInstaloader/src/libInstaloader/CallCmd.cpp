@@ -1,5 +1,26 @@
+#include <vector>
+#include <sstream>
+#include <fstream>
 #include "CallCmd.h"
+
+string runCMDIntenal(string cmd);
+std::vector<std::string>& split(const std::string& s, char delim, std::vector<std::string>& elems);
+bool IsJsonData(std::string strData);
+
+
 string runCMD(string cmd){
+	string result;
+	result = runCMDIntenal(cmd);
+	vector<string> elims;
+	split(result, '\n', elims);
+	for (string s : elims) {
+		if (IsJsonData(s.c_str()))
+			result = s;
+	}
+	return result;
+}
+
+string runCMDIntenal(string cmd) {
 	HANDLE hRead, hWrite;    //管道的读写句柄
 	SECURITY_ATTRIBUTES sa; //管道安全属性相关结构体
 	sa.nLength = sizeof(SECURITY_ATTRIBUTES); //结构体长度赋值
@@ -18,8 +39,8 @@ string runCMD(string cmd){
 	si.wShowWindow = SW_HIDE;     //设定子进程窗体是否隐藏
 	si.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES; //wShowWindow成员将包含其他信息；hStdInput，hStdOutput和hStdError成员包含其他信息。
 	if (!CreateProcess(
-		NULL ,     //子进程完整目录
-		(char *)cmd.c_str(),    //命令行参数
+		NULL,     //子进程完整目录
+		(char*)cmd.c_str(),    //命令行参数
 		NULL, NULL,
 		TRUE,                   //新进程继承父进程相关权限
 		NULL, NULL, NULL,
@@ -42,4 +63,38 @@ string runCMD(string cmd){
 	}
 
 	return result;
+}
+
+std::vector<std::string>& split(const std::string& s, char delim, std::vector<std::string>& elems) {
+	std::stringstream ss(s);
+	std::string item;
+	while (std::getline(ss, item, delim)) {
+		elems.push_back(item);
+	}
+	return elems;
+}
+bool IsJsonData(std::string strData)
+{
+	if (strData[0] != '{')
+		return false;
+
+	int num = 1;
+	for (int i = 1; i < strData.length(); ++i)
+	{
+		if (strData[i] == '{')
+		{
+			++num;
+		}
+		else if (strData[i] == '}')
+		{
+			--num;
+		}
+
+		if (num == 0)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }

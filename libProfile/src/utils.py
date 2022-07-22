@@ -1,9 +1,14 @@
-import re,sys,os,json
+import re,sys,os,json,time
 from enum import Enum
 from functools import wraps
 from urllib.request import getproxies
+
+import func_timeout
 import requests
 from func_timeout import func_set_timeout
+
+from inslog import logger
+
 
 class MsgType(Enum):
     param = 'parsing'
@@ -18,17 +23,33 @@ def flush_print(data):
     print(data)
     sys.stdout.flush()
 
-@func_set_timeout(10)
+
 def downpic(url,filename):
+    try:
+        downpic_internal(url,filename)
+    except func_timeout.exceptions.FunctionTimedOut as e:
+        logger.error("download img Failed ,download Timeout")
+        raise Exception("image download timeout, the reson ：", e)
+@func_set_timeout(10)
+def downpic_internal(url,filename):
+    logger.info("download img start, filename == %s, url== %s" % (filename,url))
     filename = os.path.abspath(filename)
     directory = os.path.dirname(filename)
     if not os.path.exists(directory):
+        logger.warning("directory  %s not existed,now to crate it " % (directory))
         os.mkdir(directory)
     ret= requests.get(url,proxies=getSystemProxies())
     if ret.status_code == 200:
-        with open(filename, 'wb') as fp:
-            fp.write(ret.content)
-
+        try:
+            with open(filename, 'wb') as fp:
+                fp.write(ret.content)
+            logger.info("download img successful")
+        except Exception as e:
+            logger.error("save img to local Failed")
+            raise e
+    else:
+        logger.error("download img Failed, http code: %s" % ret.status_code)
+    logger.info("download img end")
 def getSystemProxies():
   auto_proxies = getproxies()
   if auto_proxies != {}:
@@ -53,6 +74,7 @@ def error_process(func):
                 'ret_code':'0'
             }}
             ret['msg'].update(data)
+
         except Exception as e:
             ret = {'type': MsgType.finished.value, 'msg': {
                 'ret_code': '-1',
@@ -83,3 +105,9 @@ def pack_story(item):
         node['height'] = item['video_versions'][0]['height']
         node['width'] = item['video_versions'][0]['width']
     return node
+def is_json(file):
+    try:
+        json.loads(file)
+    except Exception:
+        return False
+    return True
