@@ -2,6 +2,7 @@
 #include <iostream>
 #include "utils.h"
 #include "profile.h"
+#include "instaloader.h"
 #include "resource.h"
 
 
@@ -38,6 +39,7 @@ INT_PTR CALLBACK _WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
    
     switch (message) {
     case WM_INITDIALOG:
+        setLogPath(R"(C:\Users\Administrator\AppData\Local\HitPaw Software\HitPawVideoConverter\logs)");
         ::GetClientRect(hwnd, &rect);
         screenW = ::GetSystemMetrics(SM_CXFULLSCREEN);
         screenH = ::GetSystemMetrics(SM_CYFULLSCREEN);

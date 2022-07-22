@@ -17,14 +17,14 @@ using namespace std;
 string inline downloadProfile(string username, string savePath);
 string inline downloadStory(string username, string savePath);
 string inline downloadPost(string url, string savePath);
-
+void inline setLogPath(string savePath);
 
 
 DLL_EXPORT void downloadProfileInternal(char*& ret, const char* username, const char* savePath);
 DLL_EXPORT void downloadStoryInternal(char*& ret, const char* username, const char* savePath);
 DLL_EXPORT void downloadPostInternal(char*& ret, const char* url, const char* savePath);
 DLL_EXPORT void releaseResult(char* ret);
-
+DLL_EXPORT void setLogPathInternal(const char* logPath);
 
 string inline downloadProfile(string username, string savePath) {
 
@@ -49,6 +49,10 @@ string inline downloadPost(string url, string savePath) {
 	string rlt(ret);
 	releaseResult(ret);
 	return rlt;
+}
+
+void inline setLogPath(string savePath) {
+	setLogPathInternal(savePath.c_str());
 }
 #endif // HEADER_INSTALOADDER
 

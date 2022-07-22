@@ -38,9 +38,6 @@
     <ClInclude Include="profile.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="instaloader.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="json.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
