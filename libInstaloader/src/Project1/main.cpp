@@ -39,7 +39,7 @@ INT_PTR CALLBACK _WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
    
     switch (message) {
     case WM_INITDIALOG:
-        setLogPath(R"(C:\Users\Administrator\AppData\Local\HitPaw Software\HitPawVideoConverter\logs)");
+        ::setLogPath(".");
         ::GetClientRect(hwnd, &rect);
         screenW = ::GetSystemMetrics(SM_CXFULLSCREEN);
         screenH = ::GetSystemMetrics(SM_CYFULLSCREEN);

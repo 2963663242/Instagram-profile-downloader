@@ -5,6 +5,8 @@ logger = logging.getLogger('inslog')
 
 def init(log_path ="",log_name = "inslog.txt", level = logging.DEBUG, when='D', backCount=1,fmt='%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s'):
     log_path = os.path.abspath(log_path)
+    if not os.path.exists(log_path):
+        os.mkdir(log_path)
     filename =os.path.join(log_path,log_name)
     format_str = logging.Formatter(fmt)  # 设置日志格式
     logger.setLevel(level)  # 设置日志级别
