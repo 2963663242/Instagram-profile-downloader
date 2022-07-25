@@ -220,3 +220,8 @@ savePath 图片下载存放路径
 }
 ~~~
 
+~~~c++
+void inline setLogPath(string savePath);
+~~~
+
+设置日志路径
