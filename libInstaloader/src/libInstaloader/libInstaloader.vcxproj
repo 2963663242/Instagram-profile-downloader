@@ -109,8 +109,8 @@
     </Link>
     <PostBuildEvent>
       <Command>cd $(SolutionDir)..\..\libProfile\script\
-call compile.bat
-xcopy $(SolutionDir)..\..\libProfile\build\bin\insExtractor\ $(OutDir)\winBin\  /Y /F /E</Command>
+call compile.bat -F
+xcopy $(SolutionDir)..\..\libProfile\build\bin\ $(OutDir)\winBin\  /Y /F /E</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -132,8 +132,8 @@ xcopy $(SolutionDir)..\..\libProfile\build\bin\insExtractor\ $(OutDir)\winBin\  
     </Link>
     <PostBuildEvent>
       <Command>cd $(SolutionDir)..\..\libProfile\script\
-call compile.bat
-xcopy $(SolutionDir)..\..\libProfile\build\bin\insExtractor\ $(OutDir)\winBin\  /Y /F /E</Command>
+call compile.bat -F
+xcopy $(SolutionDir)..\..\libProfile\build\bin\ $(OutDir)\winBin\  /Y /F /E</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -151,8 +151,8 @@ xcopy $(SolutionDir)..\..\libProfile\build\bin\insExtractor\ $(OutDir)\winBin\  
     </Link>
     <PostBuildEvent>
       <Command>cd $(SolutionDir)..\..\libProfile\script\
-call compile.bat
-xcopy $(SolutionDir)..\..\libProfile\build\bin\insExtractor\ $(OutDir)\winBin\  /Y /F /E</Command>
+call compile.bat -F
+xcopy $(SolutionDir)..\..\libProfile\build\bin\ $(OutDir)\winBin\  /Y /F /E</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -174,8 +174,8 @@ xcopy $(SolutionDir)..\..\libProfile\build\bin\insExtractor\ $(OutDir)\winBin\  
     </Link>
     <PostBuildEvent>
       <Command>cd $(SolutionDir)..\..\libProfile\script\
-call compile.bat
-xcopy $(SolutionDir)..\..\libProfile\build\bin\insExtractor\ $(OutDir)\winBin\  /Y /F /E</Command>
+call compile.bat -F
+xcopy $(SolutionDir)..\..\libProfile\build\bin\ $(OutDir)\winBin\  /Y /F /E</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
