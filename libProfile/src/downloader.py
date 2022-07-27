@@ -118,11 +118,16 @@ class InstagramExtractor():
             logger.warning("get_post_by_media_id Failed,get post data maybe incomplete, please log in")
         else:
             logger.warning("get_post_by_media_id Failed,get post data maybe incomplete, http code: %s" % response.status_code)
-        items = data['items']
+        items = data['items'][0]
         nodes = []
-        for item in items:
-            node = pack_story(item)
+        if items["media_type"] & 0x3 != 0:
+            node = pack_story(items)
             nodes.append(node)
+        else:
+            items = items['carousel_media']
+            for item in items:
+                node = pack_story(item)
+                nodes.append(node)
         logger.info("get_post_by_media_id end")
         return nodes
 
@@ -144,27 +149,25 @@ class InstagramExtractor():
         if response.status_code != 200:
             logger.error("get embed post Failed, the status code is %s",response.status_code)
         data = re.search("window.__additionalDataLoaded\('extra',(.+?)\);</script>", text).group(1)
-
-        if data == 'null':
-            logger.warning("not additionalDataLoaded, now try to get post by media id, sure you already log in")
-            display_url = re.search('<img class="EmbeddedMediaImage" alt="Instagram post shared by @.+?" src="(.+?)" srcset',text).group(1)
-            display_url = display_url.replace("&amp;","&")
-            node = [{'display_url':display_url}]
-            try:
-                id = re.search('data-media-id="(.+?)"',text).group(1)
-                node = self.get_post_by_media_id(id)
-            except Exception as e:
-                pass
-        else:
-            data = json.loads(data)['shortcode_media']
-            node = []
-            if 'edge_sidecar_to_children' in data:
-                sub_nodes = []
-                for sub in data['edge_sidecar_to_children']['edges']:
-                    sub_nodes.append(pack_post(sub["node"]))
-                node = sub_nodes
+        try:
+            id = re.search('data-media-id="(.+?)"', text).group(1)
+            node = self.get_post_by_media_id(id)
+        except Exception as e:
+            if data == 'null':
+                logger.warning("not additionalDataLoaded, now try to get post by media id, sure you already log in")
+                display_url = re.search('<img class="EmbeddedMediaImage" alt="Instagram post shared by @.+?" src="(.+?)" srcset',text).group(1)
+                display_url = display_url.replace("&amp;","&")
+                node = [{'display_url':display_url}]
             else:
-                node.append(pack_post(data))
+                data = json.loads(data)['shortcode_media']
+                node = []
+                if 'edge_sidecar_to_children' in data:
+                    sub_nodes = []
+                    for sub in data['edge_sidecar_to_children']['edges']:
+                        sub_nodes.append(pack_post(sub["node"]))
+                    node = sub_nodes
+                else:
+                    node.append(pack_post(data))
         logger.info("get_post end")
         return {"post":node}
 

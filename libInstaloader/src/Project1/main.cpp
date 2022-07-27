@@ -20,6 +20,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,        // 当前的应用程序句柄
 )
 
 {
+   
+
     ::DialogBox(hInstance, MAKEINTRESOURCE(IDD_MAIN), NULL, _WndProc);
 
     return 0;

@@ -13,12 +13,12 @@ void onProfileButtonClick(HWND hDlg)
 	std::string username;
 	std::string savePath;
 
-	::GetDlgItemText(hDlg,IDC_INPUT,buffer, MAX_BUFFER_SIZE);
+	::GetDlgItemText(hDlg, IDC_INPUT, buffer, MAX_BUFFER_SIZE);
 	username = utils::wstring2string(buffer);
 	::GetDlgItemText(hDlg, IDC_SHOW_DIR, buffer, MAX_BUFFER_SIZE);
 	savePath = utils::wstring2string(buffer);
-	
-	
+
+
 	thread profileThread([=]() {
 		std::string ret = "";
 		std::string imgPath = "";
@@ -26,22 +26,28 @@ void onProfileButtonClick(HWND hDlg)
 		copyData.cbData = sizeof(PhotoShower);
 		copyData.dwData = (DWORD)shower;
 		ret = downloadProfile(username, savePath);
-		
-		 
+
+
 		auto jsonrlt = nlohmann::json::parse(ret);
 		if (jsonrlt.find("type") != jsonrlt.end() && jsonrlt["type"].get<std::string>() == "finished") {
 			auto msg = jsonrlt["msg"];
 			if (msg["ret_code"].get<std::string>() == "0") {
 				auto post = msg["profile"];
-				std::vector<std::wstring> imgPaths{};
+				std::vector<MyImage *> imgs{};
+
 				for (auto obj : post) {
+					std::string  imgPath;
+					int width;
+					int height;
 					if (obj.find("path") != obj.end()) {
 						imgPath = obj["path"].get<std::string>();
-						imgPaths.push_back(utils::string2wstring(imgPath));
-
+						width = obj["width"].get<int>();
+						height = obj["height"].get<int>();
+						imgs.push_back(new MyImage(utils::string2wstring(imgPath), width, height));
 					}
 				}
-				shower->setImages(imgPaths);
+
+				shower->setImages(imgs);
 				SendMessage(hDlg, WM_SHOWIMAGE, 0, 1);
 				return;
 			}
@@ -75,15 +81,29 @@ void onPostButtonClick(HWND hDlg)
 			auto msg = jsonrlt["msg"];
 			if (msg["ret_code"].get<std::string>() == "0") {
 				auto post = msg["post"];
-				std::vector<std::wstring> imgPaths{};
+				std::vector<MyImage*> imgs{};
 				for (auto obj : post) {
-					if (obj.find("path") != obj.end()) {
-						imgPath = obj["path"].get<std::string>();
-						imgPaths.push_back(utils::string2wstring(imgPath));
+					MyImage* img = 0;
+						std::string  imgPath;
+						int width = 0;
+						int height = 0;
+						std::string videoUrl;
+						if (obj.find("path") != obj.end()) {
+							imgPath = obj["path"].get<std::string>();
+						}
+						if (obj.find("width") != obj.end())
+							width = obj["width"].get<int>();
+						if (obj.find("height") != obj.end())
+							height = obj["height"].get<int>();
+							img = new MyImage(utils::string2wstring(imgPath), width, height);
+							imgs.push_back(img);
 						
-					}
+						if (obj.find("video_url") != obj.end()) {
+							videoUrl = obj["video_url"].get<std::string>();
+							img->setVideoUrl(videoUrl);
+						}
 				}
-				shower->setImages(imgPaths);
+				shower->setImages(imgs);
 				SendMessage(hDlg, WM_SHOWIMAGE, 0, 1);
 				return;
 			}
@@ -118,14 +138,26 @@ void onStoryButtonClick(HWND hDlg)
 			if (msg["ret_code"].get<std::string>() == "0") {
 				auto post = msg["stories"];
 				std::vector<std::wstring> imgPaths{};
+				std::vector<MyImage*> imgs{};
 				for (auto obj : post) {
+					MyImage* img = 0;
+					std::string  imgPath;
+					int width;
+					int height;
+					std::string videoUrl;
 					if (obj.find("path") != obj.end()) {
 						imgPath = obj["path"].get<std::string>();
-						imgPaths.push_back(utils::string2wstring(imgPath));
-
+						width = obj["width"].get<int>();
+						height = obj["height"].get<int>();
+						img = new MyImage(utils::string2wstring(imgPath), width, height);
+						imgs.push_back(img);
+					}
+					if (obj.find("video_url") != obj.end()) {
+						videoUrl = obj["video_url"].get<std::string>();
+						img->setVideoUrl(videoUrl);
 					}
 				}
-				shower->setImages(imgPaths);
+				shower->setImages(imgs);
 				SendMessage(hDlg, WM_SHOWIMAGE, 0, 1);
 				return;
 			}

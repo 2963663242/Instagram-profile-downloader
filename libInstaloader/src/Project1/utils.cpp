@@ -1,6 +1,8 @@
 #include "utils.h"
 #include <shlobj_core.h>
 #include <comutil.h>
+#include <atlimage.h>
+#include <atlbase.h>
 
 #pragma comment(lib, "comsuppw.lib")
 using namespace std;
@@ -91,4 +93,40 @@ void utils::openFolder(wstring folder)
 		wchar_t* pwchar = (wchar_t*)t;
 		wstring result = pwchar;
 		return result;
+	}
+
+	std::wstring getChromePath() {
+		CString chromePath = _T("");
+		CRegKey reg;
+		if (reg.Open(HKEY_CURRENT_USER,
+			_T("Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Google Chrome"),
+			KEY_READ) == ERROR_SUCCESS)
+		{
+			TCHAR szValue[512] = { 0 };
+			DWORD dwSize = 512;
+			if (reg.QueryStringValue(_T("InstallLocation"), szValue, &dwSize) == ERROR_SUCCESS)
+			{
+				chromePath = szValue;
+				chromePath.Append(_T("\\chrome.exe"));
+			}
+		}
+		if (reg.Open(HKEY_LOCAL_MACHINE,
+			_T(R"(SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\chrome.exe)"),
+			KEY_READ) == ERROR_SUCCESS)
+		{
+			TCHAR szValue[512] = { 0 };
+			DWORD dwSize = 512;
+			if (reg.QueryStringValue(_T("Path"), szValue, &dwSize) == ERROR_SUCCESS)
+			{
+				chromePath = szValue;
+				chromePath.Append(_T("\\chrome.exe"));
+			}
+		}
+		return chromePath.GetBuffer(0);
+	}
+
+	void utils::ChromeOpenUrl(std::wstring url) {
+		wstring path = TEXT("\"")+getChromePath()+TEXT("\"");
+		url = TEXT("\"") + url + TEXT("\"");
+		::ShellExecute(NULL, TEXT("open"), path.c_str(), url.c_str(), NULL, SW_SHOWNORMAL);
 	}

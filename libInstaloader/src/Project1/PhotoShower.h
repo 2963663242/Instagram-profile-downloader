@@ -2,6 +2,9 @@
 #include <Windows.h>
 #include <iostream>
 #include <vector>
+
+class MyImage;
+
 class PhotoShower
 {
 public:
@@ -10,17 +13,18 @@ public:
 	void setSize(int width, int height);
 	void setPosition(int x, int y);
 	void setVisiable(bool flag);
-	void setImages(std::vector<std::wstring> imgPaths);
+	void setImages(std::vector<MyImage*> imgs);
 	void setImgIndex(int index);
 	int getImgIndex();
 	int getImgCount();
 	void addImgIndex();
 	void subImgIndex();
-	HBITMAP getcurimg();
+	MyImage* getcurimg();
 private:
 	HWND wndInstance = 0;
 	std::vector<HBITMAP> imgs;
 	std::vector<std::wstring> imgPaths;
+	std::vector<MyImage*> myImgs;
 	int index;
 	HWND hParent = 0;
 	int x = 0;
@@ -35,3 +39,23 @@ private:
 
 };
 
+class MyImage {
+public:
+	MyImage(std::wstring imgPath, int width, int height);
+	MyImage(){};
+	~MyImage();
+	void setVideoUrl(std::string videoUrl);
+	std::string getVideoUrl();
+	int getWidth();
+	int getHeight();
+	std::wstring getImgPath();
+	HBITMAP getBitmap();
+private:
+	int width;
+	int height;
+	std::string displayUrl;
+	std::string videoUrl;
+	HBITMAP bitmap = 0;
+	std::wstring imgPath;
+
+};

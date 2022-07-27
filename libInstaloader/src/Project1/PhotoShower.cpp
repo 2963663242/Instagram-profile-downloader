@@ -2,9 +2,11 @@
 #include <atlimage.h>
 #include "utils.h"
 
+
 #define WM_SHOW_PROFILE_RESULT 400
 #define IDC_UP_PHOTO 3001
 #define IDC_DOWN_PHOTO 3002
+#define IDC_PLAY_VIDEO 3003
 
 #define BUTTON_WIDTH 100
 #define BUTTON_HEGIHT 25
@@ -49,29 +51,29 @@ void PhotoShower::setVisiable(bool flag)
 	PostMessage(this->wndInstance, WM_SHOW_PROFILE_RESULT, flag, 0);
 }
 
-void PhotoShower::setImages(std::vector<std::wstring> imgPaths)
+void PhotoShower::setImages(std::vector<MyImage*> imgs)
 {
-	HBITMAP hbmp;
-	HRESULT ret = 1;
-	CImage img, imDest;
+	
 
-	for (HBITMAP imgpath : this->imgs) {
-		::DeleteObject(imgpath);
+	for (MyImage* myImg : this->myImgs) {
+		delete myImg;
 	}
-	this->imgs.clear();
+	this->myImgs.clear();
 	this->index = 0;
-	this->imgs.resize(0);
-	for (std::wstring imgpath : imgPaths) {
-		ret = img.Load(imgpath.c_str());
-		if (ret == 0)
-		{
-			//imDest.Create(60, 19, 32);
-			//img.StretchBlt(imDest.GetDC(), CRect(0, 0, 60, 19), CRect(0, 0, 60, 19));
-			//imDest.ReleaseDC();
-			hbmp = img.Detach();
-			this->imgs.push_back(hbmp);
-		}
-	}
+	this->myImgs.resize(0);
+
+	this->myImgs = imgs;
+	//for (std::wstring imgpath : imgPaths) {
+	//	ret = img.Load(imgpath.c_str());
+	//	if (ret == 0)
+	//	{
+	//		//imDest.Create(60, 19, 32);
+	//		//img.StretchBlt(imDest.GetDC(), CRect(0, 0, 60, 19), CRect(0, 0, 60, 19));
+	//		//imDest.ReleaseDC();
+	//		hbmp = img.Detach();
+	//		this->imgs.push_back(hbmp);
+	//	}
+	//}
 }
 //void PhotoShower::setImages(std::vector<std::wstring> imgPaths)
 //{
@@ -86,12 +88,12 @@ int PhotoShower::getImgIndex()
 int PhotoShower::getImgCount()
 {
 
-	return this->imgs.size();
+	return this->myImgs.size();
 }
 
 void PhotoShower::addImgIndex()
 {
-	int size = this->imgs.size();
+	int size = this->myImgs.size();
 	
 	if (this->index < size-1)
 		this->index++;
@@ -108,10 +110,10 @@ void PhotoShower::setImgIndex(int index)
 	this->index = index;
 }
 
-HBITMAP PhotoShower::getcurimg()
+MyImage * PhotoShower::getcurimg()
 {
-	if (this->imgs.size() != 0 && this->index < this->imgs.size())
-		return this->imgs[this->index];
+	if (this->myImgs.size() != 0 && this->index < this->myImgs.size())
+		return this->myImgs[this->index];
 	else
 		return 0;
 }
@@ -137,6 +139,7 @@ LRESULT PhotoShower::czlProcExternal(HWND hwnd, UINT message, WPARAM wParam, LPA
 {
 	static HWND upButton;
 	static HWND downButton;
+	static HWND playVideo;
 
 	PhotoShower* photoshower = (PhotoShower*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 	switch (message) {
@@ -150,16 +153,24 @@ LRESULT PhotoShower::czlProcExternal(HWND hwnd, UINT message, WPARAM wParam, LPA
 			photoshower->addImgIndex();
 			utils::_UpdateWindow(hwnd);
 			break;
+		case IDC_PLAY_VIDEO:
+			MyImage* img = photoshower->getcurimg();
+			std::string videoUrl = img->getVideoUrl();
+			if (videoUrl != "") {
+				utils::ChromeOpenUrl(utils::string2wstring(videoUrl));
+			}
+			break;
 		}
 		break;
 	case WM_CREATE:
 		upButton = CreateWindow(TEXT("Button"), TEXT("上一张"), WS_CHILD | BS_PUSHBUTTON|WS_VISIBLE,0, 0, 0, 0, hwnd, (HMENU)IDC_UP_PHOTO, NULL, NULL);
 		downButton = CreateWindow(TEXT("Button"), TEXT("下一张"), WS_CHILD | BS_PUSHBUTTON | WS_VISIBLE, 0, 0, 0, 0, hwnd, (HMENU)IDC_DOWN_PHOTO, NULL, NULL);
-
+		playVideo = CreateWindow(TEXT("Button"), TEXT("播放"), WS_CHILD | BS_PUSHBUTTON, 0, 0, 0, 0, hwnd, (HMENU)IDC_PLAY_VIDEO, NULL, NULL);
 		break;
 	case WM_PAINT: {
 		HDC hdc, mdc;
 		PAINTSTRUCT ps;
+		MyImage *img;
 		HBITMAP hbmp{};
 		HGDIOBJ oldBmp;
 		BITMAP   bm;
@@ -172,10 +183,19 @@ LRESULT PhotoShower::czlProcExternal(HWND hwnd, UINT message, WPARAM wParam, LPA
 		::GetClientRect(hwnd, &rect);
 		clWidth = rect.right;
 		clHeight = rect.bottom;
-		hbmp = photoshower->getcurimg();
+		img = photoshower->getcurimg();
+		hbmp = img->getBitmap();
 		::GetObject(hbmp, sizeof(BITMAP), &bm);
 		width = clWidth /3;
 		height = bm.bmHeight * width / bm.bmWidth;
+
+
+
+		/*设置播放按钮可见性*/
+		if (img->getVideoUrl() != "")
+			::ShowWindow(playVideo, SW_SHOW);
+		else
+			::ShowWindow(playVideo, SW_HIDE);
 
 		hdc = ::BeginPaint(hwnd, &ps);
 		if (hbmp != 0) {
@@ -189,13 +209,23 @@ LRESULT PhotoShower::czlProcExternal(HWND hwnd, UINT message, WPARAM wParam, LPA
 			//::DeleteObject(hbmp);
 			::DeleteObject(mdc); 
 		}
-
+		
+		/*打印图片进度*/
 		swprintf_s(buffer, TEXT("(%d/%d)"), photoshower->getImgIndex() + 1, photoshower->getImgCount());
 		::GetTextExtentPoint(hdc, buffer, wcslen(buffer), &size);
 		::TextOut(hdc, (clWidth - size.cx) / 2, (clHeight / 2)+height/2, buffer, wcslen(buffer));
-		
+		/*打印分辨率*/
+		swprintf_s(buffer, TEXT("(%d × %d)"), img->getWidth(), img->getHeight());
+		::GetTextExtentPoint(hdc, buffer, wcslen(buffer), &size);
+		::TextOut(hdc, (clWidth - size.cx) / 2, (clHeight / 2) + height / 2+50, buffer, wcslen(buffer));
+
+		/*设置按钮位置*/
 		MoveWindow(upButton, (clWidth - width) / 2- BUTTON_WIDTH - BUTTON_PHOTEO_DISTANCE, (clHeight) / 2, BUTTON_WIDTH, BUTTON_HEGIHT, TRUE);
 		MoveWindow(downButton, (clWidth + width) / 2 + BUTTON_PHOTEO_DISTANCE, (clHeight) / 2, BUTTON_WIDTH, BUTTON_HEGIHT, TRUE);
+		MoveWindow(playVideo, (clWidth - BUTTON_WIDTH) / 2 , (clHeight) / 2, BUTTON_WIDTH, BUTTON_HEGIHT, TRUE);
+
+		
+		
 		::EndPaint(hwnd, &ps);
 
 		break;
@@ -229,4 +259,63 @@ std::wstring PhotoShower::createCzlClass()
 		MessageBox(0, TEXT("RegisterClass input failed"), 0, 0);
 	}
 	return className;
+}
+
+
+MyImage::MyImage(std::wstring imgPath, int width=0, int height=0)
+{
+	this->imgPath = imgPath;
+	this->width = width;
+	this->height = height;
+
+	HBITMAP hbmp;
+	HRESULT ret = 1;
+	CImage img, imDest;
+
+	ret = img.Load(this->imgPath.c_str());
+		if (ret == 0)
+		{
+
+			hbmp = img.Detach();
+			this->bitmap = hbmp;
+		}
+}
+
+MyImage::~MyImage()
+{
+	if (bitmap != NULL) {
+		::DeleteObject(bitmap);
+		bitmap = NULL;
+	}
+
+}
+
+void MyImage::setVideoUrl(std::string videoUrl)
+{
+	this->videoUrl = videoUrl;
+}
+
+std::string MyImage::getVideoUrl()
+{
+	return this->videoUrl;
+}
+
+int MyImage::getWidth()
+{
+	return this->width;
+}
+
+int MyImage::getHeight()
+{
+	return this->height;
+}
+
+std::wstring MyImage::getImgPath()
+{
+	return this->imgPath;
+}
+
+HBITMAP MyImage::getBitmap()
+{	
+	return this->bitmap;
 }
