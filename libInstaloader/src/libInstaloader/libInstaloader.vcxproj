@@ -110,8 +110,15 @@
     <PostBuildEvent>
       <Command>cd $(SolutionDir)..\..\libProfile\script\
 call compile.bat -F
-xcopy $(SolutionDir)..\..\libProfile\build\bin\ $(OutDir)\winBin\  /Y /F /E</Command>
+xcopy $(SolutionDir)..\..\libProfile\build\bin\ $(OutDir)\winBin\  /Y /F /E
+xcopy $(ProjectDir)instaloader.h $(OutDir) /Y /F
+</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>cd $(SolutionDir)..\script\
+call get_version.bat
+xcopy $(SolutionDir)..\script\version.h $(ProjectDir) /Y /F</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -133,8 +140,15 @@ xcopy $(SolutionDir)..\..\libProfile\build\bin\ $(OutDir)\winBin\  /Y /F /E</Com
     <PostBuildEvent>
       <Command>cd $(SolutionDir)..\..\libProfile\script\
 call compile.bat -F
-xcopy $(SolutionDir)..\..\libProfile\build\bin\ $(OutDir)\winBin\  /Y /F /E</Command>
+xcopy $(SolutionDir)..\..\libProfile\build\bin\ $(OutDir)\winBin\  /Y /F /E
+xcopy $(ProjectDir)instaloader.h $(OutDir) /Y /F
+</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>cd $(SolutionDir)..\script\
+call get_version.bat
+xcopy $(SolutionDir)..\script\version.h $(ProjectDir) /Y /F</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -152,8 +166,15 @@ xcopy $(SolutionDir)..\..\libProfile\build\bin\ $(OutDir)\winBin\  /Y /F /E</Com
     <PostBuildEvent>
       <Command>cd $(SolutionDir)..\..\libProfile\script\
 call compile.bat -F
-xcopy $(SolutionDir)..\..\libProfile\build\bin\ $(OutDir)\winBin\  /Y /F /E</Command>
+xcopy $(SolutionDir)..\..\libProfile\build\bin\ $(OutDir)\winBin\  /Y /F /E
+xcopy $(ProjectDir)instaloader.h $(OutDir) /Y /F
+</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>cd $(SolutionDir)..\script\
+call get_version.bat
+xcopy $(SolutionDir)..\script\version.h $(ProjectDir) /Y /F</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -175,8 +196,15 @@ xcopy $(SolutionDir)..\..\libProfile\build\bin\ $(OutDir)\winBin\  /Y /F /E</Com
     <PostBuildEvent>
       <Command>cd $(SolutionDir)..\..\libProfile\script\
 call compile.bat -F
-xcopy $(SolutionDir)..\..\libProfile\build\bin\ $(OutDir)\winBin\  /Y /F /E</Command>
+xcopy $(SolutionDir)..\..\libProfile\build\bin\ $(OutDir)\winBin\  /Y /F /E
+xcopy $(ProjectDir)instaloader.h $(OutDir) /Y /F
+</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>cd $(SolutionDir)..\script\
+call get_version.bat
+xcopy $(SolutionDir)..\script\version.h $(ProjectDir) /Y /F</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CallCmd.cpp" />
@@ -185,6 +213,10 @@ xcopy $(SolutionDir)..\..\libProfile\build\bin\ $(OutDir)\winBin\  /Y /F /E</Com
   <ItemGroup>
     <ClInclude Include="CallCmd.h" />
     <ClInclude Include="instaloader.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="libInstaloader.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

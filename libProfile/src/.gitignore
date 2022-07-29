@@ -1,3 +1,4 @@
 *.jpg
 *.txt
 *.mp4
+/pyinstaller/

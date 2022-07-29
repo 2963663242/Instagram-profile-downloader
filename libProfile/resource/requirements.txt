@@ -1,0 +1,4 @@
+browser_cookie3==0.15.0
+func_timeout==4.3.5
+requests==2.20.1
+pyinstaller==4.9

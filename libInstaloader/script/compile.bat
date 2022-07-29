@@ -2,7 +2,6 @@ rem **************************************************************
 rem * Script to compile the solution of libInstaloader *
 rem **************************************************************
 
-
 :: 工程目录
 set WORKSPACE_INSTALOADER=%~dp0\..
 
